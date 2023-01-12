@@ -1,0 +1,76 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+	body {
+		display: grid;
+		min-height: 100vh;
+		grid-template-rows: min-content 1fr min-content;
+
+		@apply bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300;
+
+		& > header,
+		& > footer {
+			@apply container mx-auto flex p-6;
+
+			& > a {
+				@apply flex items-center text-xl font-semibold text-zinc-900 dark:text-zinc-200;
+			}
+
+			nav {
+				@apply flex items-center ml-auto space-x-4;
+			}
+		}
+
+		& > footer {
+			@apply text-zinc-400 dark:text-zinc-600 text-sm;
+		}
+	}
+
+	a {
+		@apply hover:text-zinc-900 dark:hover:text-zinc-100;
+
+		svg {
+			@apply w-6 h-6;
+		}
+	}
+
+	header {
+		@apply space-y-4;
+
+		&.text-center > p {
+			@apply mx-auto lg:w-2/3;
+		}
+	}
+
+	main {
+		@apply container mx-auto p-6 space-y-4;
+	}
+
+	h1 {
+		@apply text-2xl font-medium;
+	}
+
+	p {
+		@apply leading-relaxed;
+	}
+
+	/* Small thing before h1s */
+	* :has(+ h1) {
+		@apply tracking-widest text-xs font-medium text-zinc-400 dark:text-zinc-600 mb-1;
+
+		& + h1 {
+			@apply mt-0 !important;
+		}
+	}
+}
+
+@layer components {
+}
+
+@layer utilities {
+	.surface {
+		@apply bg-white dark:bg-zinc-800 shadow-lg rounded-lg p-8;
+	}
+}
