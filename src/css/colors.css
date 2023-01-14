@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+	body {
+		@apply bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300;
+	}
+
+	footer {
+		@apply text-gray-400 dark:text-gray-600;
+	}
+
+	a {
+		@apply hover:text-gray-900 dark:hover:text-gray-100;
+	}
+}
+
+@layer utilities {
+	.surface {
+		@apply bg-white dark:bg-gray-800;
+	}
+}

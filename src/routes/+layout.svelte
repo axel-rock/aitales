@@ -1,37 +1,29 @@
 <script lang="ts">
-	import '../app.css';
-	import type { LayoutData } from './$types';
-	import { Rive } from '@rive-app/canvas';
-	import { onMount, beforeUpdate, afterUpdate } from 'svelte';
+	import '../css/app.css'
+	import { Rive } from '@rive-app/canvas'
+	import { onMount, beforeUpdate, afterUpdate } from 'svelte'
+	import textBalancer from 'text-balancer'
+	import { currentUser, signInWithGoogle, signOut } from '$lib/auth'
 
-	import textBalancer from 'text-balancer';
+	const title = 'Ai Tales'
 
-	export let data: LayoutData;
-
-	const title = 'Ai Tales';
-	const author = 'Axel Rock';
-	const links = {
-		twitter: 'https://twitter.com/axelrock'
-	};
-	const color = 'bg-red-500';
-
-	let canvas;
-	let rive;
+	let canvas: HTMLCanvasElement
+	let rive: Rive
 
 	onMount(async () => {
 		rive = new Rive({
 			src: '/bubble.riv',
 			canvas: canvas
-		});
-	});
+		})
+	})
 
 	beforeUpdate(async () => {
-		textBalancer.balanceText();
-	});
+		textBalancer.balanceText()
+	})
 
 	afterUpdate(async () => {
-		textBalancer.balanceText();
-	});
+		textBalancer.balanceText()
+	})
 </script>
 
 <header>
@@ -40,8 +32,26 @@
 		{title}
 	</a>
 	<nav>
+		{#if $currentUser?.access.admin}
+			<a href="/admin">Admin</a>
+		{/if}
+		{#if $currentUser?.access.pro}
+			<a href="/pro">Pro</a>
+		{/if}
 		<a href="/pricing">Pricing</a>
-		<a href="/">Login</a>
+
+		{#if $currentUser}
+			<button on:click={signOut}>{$currentUser?.displayName}</button>
+		{:else}
+			<button on:click={signInWithGoogle}>Login with Google</button>
+		{/if}
+		<!-- {#if $user === undefined}
+			<span>Waiting</span>
+		{:else if $user}
+			<span>{$user.uid}</span>
+		{:else}
+			<span>Not signed in</span>
+		{/if} -->
 	</nav>
 </header>
 
@@ -104,12 +114,11 @@
 
 <style>
 	:root {
-		font-size: 1.2em !important;
+		/* font-size: 1.2em !important; */
 	}
 
 	header canvas {
 		width: 3rem;
 		aspect-ratio: 1;
-		/* background: red; */
 	}
 </style>

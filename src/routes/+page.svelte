@@ -1,18 +1,18 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import type { PageData } from './$types';
-	import Story from './stories/Story.svelte';
+	import { onMount } from 'svelte'
+	import type { PageData } from './$types'
+	import Story from './stories/Story.svelte'
 
-	export let data: PageData;
+	export let data: PageData
 </script>
 
-<header class="text-center mb-10">
+<hgroup class="text-center mb-10">
 	<h1>Stories</h1>
 	<p class="balance-text">
 		Explore stories, uniquely tailored for you, with endless possiblities, narrated by artificial
 		intelligence.
 	</p>
-</header>
+</hgroup>
 
 <section class="grid sm:grid-cols-1 md:grid-cols-2 gap-4 ">
 	{#each data.stories as story}

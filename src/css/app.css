@@ -1,0 +1,50 @@
+@import './forms.css';
+@import './colors.css';
+@import './theme.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+	body {
+		@apply grid min-h-screen content-center;
+		grid-template-rows: min-content 1fr min-content;
+	}
+
+	header,
+	footer {
+		@apply container flex mx-auto justify-between items-center;
+	}
+
+	nav {
+		@apply flex space-x-4;
+	}
+
+	main {
+		@apply container mx-auto;
+	}
+
+	form {
+		@apply grid;
+	}
+}
+
+@layer components {
+	header > a {
+		@apply flex items-center;
+	}
+	/* Links with icons */
+	a > svg {
+		@apply w-6 h-6;
+	}
+
+	/* Small thing before h1s */
+	* :has(+ h1) {
+		@apply tracking-widest text-xs font-medium text-gray-400 dark:text-gray-600 mb-1;
+
+		& + h1 {
+			@apply mt-0 !important;
+		}
+	}
+}

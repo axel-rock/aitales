@@ -1,7 +1,7 @@
 {
 	"hosting": {
 		"site": "aitales",
-		"public": "public/aitales",
+		"public": "public",
 		"rewrites": [
 			{
 				"source": "**",
