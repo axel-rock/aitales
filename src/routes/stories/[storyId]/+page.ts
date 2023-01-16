@@ -5,6 +5,6 @@ import { Story } from '$lib/story'
 
 export const load = (async ({ params }) => {
 	return {
-		story: Story.getFromId(params.story)
+		story: Story.getFromId(params.storyId)
 	}
 }) satisfies PageLoad

@@ -30,22 +30,13 @@ export const firebaseConfig = {
 	messagingSenderId: PUBLIC_MESSAGINGSENDERID,
 	appId: PUBLIC_APPID,
 	measurementId: PUBLIC_MEASUREMENTID
-	// apiKey: 'AIzaSyDCzLRBDkre2Fhh0ImepF0YTmkNPWxArZ4',
-	// authDomain: 'aitales.firebaseapp.com',
-	// projectId: 'aitales',
-	// storageBucket: 'aitales.appspot.com',
-	// messagingSenderId: '693204744875',
-	// appId: '1:693204744875:web:d9f485dc372d2f819f55ee',
-	// measurementId: 'G-L8HWJLQ8WW'
 }
 
 export const app = getApps[0] || initializeApp(firebaseConfig)
 export const firestore = getFirestore(app)
 export const db = firestore
 export const getDoc = async (path: string, ...pathSegments: string[]) => {
-	console.log(path)
 	const snapshot = await _getDoc(_doc(db, path, ...pathSegments))
-
 	return {
 		id: snapshot.id,
 		ref: snapshot.ref,
@@ -55,7 +46,6 @@ export const getDoc = async (path: string, ...pathSegments: string[]) => {
 
 export const queryCollection = async (ref: string, ...queries: QueryConstraint[]) => {
 	const snapshots = await getDocs(query(collection(db, ref), ...queries))
-
 	return snapshots.docs.map((snapshot) => {
 		return {
 			id: snapshot.id,

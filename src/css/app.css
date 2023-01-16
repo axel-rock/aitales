@@ -18,14 +18,14 @@
 	}
 
 	nav {
-		@apply flex space-x-4;
+		@apply flex space-x-4 items-center;
 	}
 
 	main {
 		@apply container mx-auto;
 	}
 
-	form {
+	form:not(.dropzone) {
 		@apply grid;
 	}
 }

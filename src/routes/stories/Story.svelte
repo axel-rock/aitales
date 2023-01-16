@@ -1,39 +1,86 @@
 <script>
+	import { Story } from '$lib/story'
+	import { Passage } from '$lib/passage'
+	import { enhance } from '$app/forms'
+
+	export let story
+
+	let progress = story.progression
+	let lastPassage = null
+
+	let src
+
+	progress.subscribe(async (passages) => {
+		if (passages.length > 0) {
+			lastPassage = passages[passages.length - 1]
+			if (lastPassage.audio) src = await lastPassage.audio
+		}
+	})
 </script>
 
-<p class="col-md-6 markdown mx-auto">
-	Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut tempore voluptates fugit natus eaque
-	eveniet libero soluta maxime, autem expedita reprehenderit! Magnam quae quia nulla dolores,
-	commodi impedit eum atque.
-</p>
-<p class="col-md-6 markdown mx-auto">
-	Ad adipisci delectus optio. Iste fugit iusto dolores consequuntur cupiditate impedit autem,
-	accusantium atque ipsa dignissimos non suscipit, beatae dicta delectus assumenda odio facere
-	officiis. Nobis reprehenderit rerum quaerat ipsam.
-</p>
-<p class="col-md-6 markdown mx-auto">
-	Mollitia distinctio quam, adipisci quis dolorum odit quia blanditiis explicabo ratione et impedit
-	vel repudiandae asperiores dignissimos ea corporis aliquid enim corrupti earum vitae? Eius culpa
-	maxime id voluptate vero!
-</p>
-<p class="col-md-6 markdown mx-auto">
-	Repellendus praesentium inventore illum assumenda. Unde, ipsum delectus, praesentium et molestiae
-	recusandae officiis ipsa tenetur vero id facere eaque sunt quia assumenda cumque! Voluptatibus
-	aspernatur quia facilis. Illo, ex dolore.
-</p>
-<p class="col-md-6 markdown mx-auto">
-	Exercitationem porro a unde omnis ipsum! Debitis vero consequatur nihil adipisci. Vel magnam,
-	quaerat nisi modi tempora est voluptatibus consectetur dolor reprehenderit optio quod, hic
-	temporibus. Saepe optio quas impedit?
-</p>
-<p class="col-md-6 markdown mx-auto">
-	Mollitia esse, quae ab possimus odit voluptas, neque odio quidem eum voluptatem praesentium amet
-	sint dolorum illum quos numquam veniam nesciunt ipsum commodi ea molestias eos assumenda.
-	Blanditiis, sed deserunt.
-</p>
+<article>
+	<hgroup class="text-center">
+		<h2>{story.categories.join(' - ')}</h2>
+		<h1>{story.title}</h1>
+	</hgroup>
 
-<style>
-	p {
-		max-width: 80ch;
-	}
-</style>
+	{#each $progress as passage}
+		<div id="passage-{passage.pid}">
+			<p>{passage.text}</p>
+		</div>
+	{/each}
+
+	{#if lastPassage?.tags?.includes('prompt')}
+		<form
+			method="POST"
+			action="?/prompt"
+			use:enhance={({ form, data, action, cancel }) => {
+				// `form` is the `<form>` element
+				// `data` is its `FormData` object
+				// `action` is the URL to which the form is posted
+				// `cancel()` will prevent the submission
+
+				return async ({ result, update }) => {
+					console.log(result)
+					console.log(update)
+
+					if (result.type === 'success') {
+						progress.update((passages) => {
+							passages.push(
+								new Passage({
+									text: result.data.text,
+									id: Math.random().toString()
+								})
+							)
+							return passages
+						})
+					}
+					// `result` is an `ActionResult` object
+					// `update` is a function which triggers the logic that would be triggered if this callback wasn't set
+				}
+			}}
+		>
+			<!-- <label for="prompt">What do you want to do?</label> -->
+			<input type="hidden" name="context" value={lastPassage.text} />
+			<input
+				type="text"
+				id="prompt"
+				name="prompt"
+				placeholder="What do you want to do?"
+				autocomplete="off"
+			/>
+			<button type="submit">Submit</button>
+		</form>
+	{/if}
+	{#if lastPassage?.links}
+		<nav>
+			{#each lastPassage.links as link}
+				<button on:click={story.nextPassage({ id: link.pid })}>{link.name}</button>
+			{/each}
+		</nav>
+	{:else}
+		<!-- <button on:click={story.nextPassage()}>Next</button> -->
+	{/if}
+
+	<audio {src} controls />
+</article>

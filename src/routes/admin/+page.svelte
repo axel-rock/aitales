@@ -1,3 +1,5 @@
 <h1>Admin</h1>
 
-<a href="/admin/stories" class="button">Stories</a>
+<nav>
+	<a href="/admin/stories" class="button">Stories</a>
+</nav>

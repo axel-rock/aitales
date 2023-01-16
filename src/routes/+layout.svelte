@@ -27,7 +27,7 @@
 </script>
 
 <header>
-	<a href="/" on:mouseenter={rive.play()} on:mouseleave={rive.pause()}>
+	<a href="/stories" on:mouseenter={rive.play()} on:mouseleave={rive.pause()}>
 		<canvas bind:this={canvas} width="128" height="128" />
 		{title}
 	</a>
@@ -35,15 +35,16 @@
 		{#if $currentUser?.access.admin}
 			<a href="/admin">Admin</a>
 		{/if}
-		{#if $currentUser?.access.pro}
+		<a href="/lores">Lores</a>
+		<!-- {#if $currentUser?.access.pro}
 			<a href="/pro">Pro</a>
-		{/if}
+		{/if} -->
 		<a href="/pricing">Pricing</a>
 
 		{#if $currentUser}
 			<button on:click={signOut}>{$currentUser?.displayName}</button>
 		{:else}
-			<button on:click={signInWithGoogle}>Login with Google</button>
+			<button on:click={signInWithGoogle} class="contrast">Login with Google</button>
 		{/if}
 		<!-- {#if $user === undefined}
 			<span>Waiting</span>
@@ -67,6 +68,7 @@
 		>
 	</span>
 	<nav>
+		<a href="/credits">Credits</a>
 		<a href="https://twitter.com/nineties_panda">
 			<svg
 				fill="currentColor"

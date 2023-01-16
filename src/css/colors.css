@@ -14,10 +14,33 @@
 	a {
 		@apply hover:text-gray-900 dark:hover:text-gray-100;
 	}
+
+	button,
+	.button,
+	input[type='button'],
+	input[type='submit'] {
+		@apply bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300;
+
+		&:hover {
+			@apply bg-gray-50 dark:bg-gray-700;
+		}
+
+		&.contrast {
+			@apply bg-gray-900 dark:bg-gray-100 text-gray-100 dark:text-gray-900;
+
+			&:hover {
+				@apply bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300;
+			}
+		}
+	}
 }
 
 @layer utilities {
 	.surface {
 		@apply bg-white dark:bg-gray-800;
+	}
+
+	.brand {
+		@apply text-brand-600 dark:text-brand-400;
 	}
 }

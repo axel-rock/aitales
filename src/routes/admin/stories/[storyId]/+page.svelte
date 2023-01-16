@@ -24,9 +24,8 @@
 	}
 
 	export const save = () => {
-		console.log('save')
 		story.passages.forEach(async (passage) => {
-			await setDoc(doc(db, 'stories', story.id, 'passages', passage.pid), passage)
+			await setDoc(doc(db, 'stories', story.id, 'passages', passage.pid), passage.asObject())
 		})
 	}
 </script>

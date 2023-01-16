@@ -8,13 +8,15 @@ export class Link {
 
 export class Passage {
 	private _text?: string
-	links?: Link[]
 	private _audio?: string
+	links?: Link[]
+	tags?: string[]
 
-	constructor({ id, text, links, audio }) {
-		this.id = id
-		this._text = text
+	constructor({ id, pid, text, links, tags, audio }) {
+		this.id = id || pid
 		this.links = links
+		this.tags = tags
+		this._text = text
 		this._audio = audio
 	}
 
@@ -35,5 +37,17 @@ export class Passage {
 	get audio() {
 		if (this._audio) return getDownloadURL(this._audio)
 		return this._audio
+	}
+
+	asObject() {
+		return Object.fromEntries(
+			Object.entries({
+				id: this.id,
+				text: this._text,
+				links: this.links,
+				tags: this.tags,
+				audio: this._audio
+			}).filter(([_, v]) => v != null)
+		)
 	}
 }

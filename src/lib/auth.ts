@@ -87,5 +87,14 @@ export const currentUser = readable<User | null>(null, (set) => {
 	return () => unsubscribe()
 })
 
+export const getCurrentUser = () =>
+	new Promise((resolve) => {
+		currentUser.subscribe((user) => {
+			if (user) {
+				resolve(user)
+			}
+		})
+	})
+
 export const signInWithGoogle = () => signInWithPopup(auth, new GoogleAuthProvider())
 export const signOut = () => _signOut(auth)

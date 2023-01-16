@@ -23,6 +23,18 @@
 		}
 	}
 
+	article {
+		@apply space-y-4 max-w-2xl mx-auto;
+
+		nav {
+			@apply flex items-center justify-center gap-4;
+		}
+
+		audio {
+			@apply mx-auto;
+		}
+	}
+
 	form {
 		@apply gap-4;
 	}
@@ -44,8 +56,20 @@
 	input[type='radio'],
 	select,
 	select[multiple],
-	textarea {
-		@apply shadow-lg rounded-lg;
+	textarea,
+	.button {
+		@apply shadow-lg rounded-xl;
+	}
+
+	button,
+	.button,
+	input[type='button'],
+	input[type='submit'] {
+		@apply shadow-lg rounded-full px-4 py-2 transition-all;
+
+		&:hover {
+			@apply shadow-xl;
+		}
 	}
 }
 
