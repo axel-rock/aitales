@@ -1,7 +1,7 @@
 import type { PageLoad } from './$types'
 import { limit, where } from 'firebase/firestore'
-import { queryCollection, getDoc } from '$lib/firebase'
-import { currentUser } from '$lib/auth'
+import { queryCollection, getDoc } from '$lib/firebase/client'
+import { currentUser } from '$lib/user'
 import { get, writable } from 'svelte/store'
 
 export const ssr = false

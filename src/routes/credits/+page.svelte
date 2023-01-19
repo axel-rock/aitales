@@ -4,11 +4,15 @@
 
 <ul>
 	<li>
-		<a href="https://twitter.com/NEOkeitaro" target="_blank" class="brand">NEOkeitaro</a> for the very
-		valuable feedback and suggestions.
+		<a href="https://twitter.com/NEOkeitaro" target="_blank">NEOkeitaro</a> for the very valuable feedback
+		and suggestions.
 	</li>
 	<li>
-		<a href="https://twitter.com/FibreTigre" target="_blank" class="brand">Fibre Tigre</a> for his great
-		stories, and making me want to create mine.
+		<a href="https://twitter.com/FibreTigre" target="_blank">Fibre Tigre</a> for his great stories, and
+		making me want to create mine.
+	</li>
+	<li>
+		<a href="https://twitter.com/Sonny_AD" target="_blank">Sonny Alves Dias</a>, and the rest of the
+		Game of Rôles wiki contributors.
 	</li>
 </ul>

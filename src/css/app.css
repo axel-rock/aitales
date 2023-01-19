@@ -1,50 +1,67 @@
-@import './forms.css';
-@import './colors.css';
-@import './theme.css';
+@import './reset.css';
+@import './vars.css';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@layer base {
-	body {
-		@apply grid min-h-screen content-center;
-		grid-template-rows: min-content 1fr min-content;
-	}
-
-	header,
-	footer {
-		@apply container flex mx-auto justify-between items-center;
-	}
-
-	nav {
-		@apply flex space-x-4 items-center;
-	}
-
-	main {
-		@apply container mx-auto;
-	}
-
-	form:not(.dropzone) {
-		@apply grid;
-	}
+:root {
+	font-size: 1.1em;
+	font-family: var(--font-family);
+	color-scheme: light dark;
 }
 
-@layer components {
-	header > a {
-		@apply flex items-center;
-	}
-	/* Links with icons */
-	a > svg {
-		@apply w-6 h-6;
-	}
+body {
+	display: grid;
+	grid-template-rows: min-content 1fr min-content;
+}
 
-	/* Small thing before h1s */
-	* :has(+ h1) {
-		@apply tracking-widest text-xs font-medium text-gray-400 dark:text-gray-600 mb-1;
+header,
+footer {
+	padding: var(--space-large);
+	display: grid;
+	gap: var(--space);
+	align-items: center;
+}
 
-		& + h1 {
-			@apply mt-0 !important;
-		}
+main {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space);
+	padding-inline: var(--space-large);
+}
+
+a {
+	color: inherit;
+	text-decoration: none;
+}
+
+nav {
+	display: grid;
+	gap: var(--space);
+}
+
+form {
+	display: grid;
+	gap: var(--space);
+}
+
+/* Utility */
+
+.center {
+	text-align: center;
+	place-content: center;
+}
+
+.surface {
+	background-color: inherit;
+	filter: brightness(120%);
+	padding: var(--space);
+}
+
+@media only screen and (min-device-width: 667px) {
+	header,
+	footer {
+		display: flex;
+		justify-content: space-between;
+	}
+	nav {
+		display: flex;
 	}
 }

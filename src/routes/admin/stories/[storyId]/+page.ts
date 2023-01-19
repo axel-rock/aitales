@@ -1,10 +1,12 @@
 import type { PageLoad } from './$types'
-import { limit } from 'firebase/firestore'
-import { getDoc, queryCollection } from '$lib/firebase'
-import { Story } from '$lib/story'
 
-export const load = (async ({ params }) => {
+export const load = (async ({ params, parent }) => {
+	const { stories } = await parent()
+	const story = stories.find((story) => story.id === params.storyId)
+
 	return {
-		story: Story.getFromId(params.storyId)
+		story,
+		passages: story.passages,
+		progress: story.progress
 	}
 }) satisfies PageLoad

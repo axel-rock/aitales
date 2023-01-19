@@ -1,15 +1,82 @@
 <script lang="ts">
-	import type { PageData, ActionData } from './$types'
+	import type { PageData } from './$types'
 	import { enhance } from '$app/forms'
-	import { db } from '$lib/firebase'
-	import { setDoc, doc } from 'firebase/firestore'
-	import { currentUser } from '$lib/auth'
-
-	import Story from '../Story.svelte'
+	import { Passage } from '$lib/stories/passage'
 
 	export let data: PageData
+	let { story } = data
+	let { passages } = data
+	let { progress } = story
 
-	let story = data.story
+	$: lastPassage = $progress?.at(-1)
+
+	let src
+
+	progress.subscribe(async (passages) => {
+		if (passages.at(-1)) {
+			src = await passages.at(-1).audio
+		}
+	})
 </script>
 
-<Story {story} />
+<article>
+	<!-- <Heading tag="h1" customSize="text-2xl font-medium">{story.title}</Heading> -->
+	<h1>{story.title}</h1>
+
+	{#if $progress.length}
+		{#each $progress as passage}
+			<p id="passage-{passage.pid}">{passage.text}</p>
+		{/each}
+	{:else}
+		<span>Loading...</span>
+	{/if}
+
+	<!-- {#if lastPassage.tags?.includes('prompt')} -->
+	<form
+		method="POST"
+		action="?/prompt"
+		use:enhance={({ form, data, action, cancel }) => {
+			return async ({ result, update }) => {
+				if (result.type === 'success') {
+					progress.update((passages) => {
+						passages.push(
+							new Passage({
+								text: result.data.text,
+								id: Math.random().toString()
+							})
+						)
+						return passages
+					})
+				}
+			}
+		}}
+	>
+		<!-- <label for="prompt">What do you want to do?</label> -->
+		<input
+			type="text"
+			id="prompt"
+			name="prompt"
+			placeholder="What do you want to do?"
+			autocomplete="off"
+		/>
+		<input type="hidden" name="storyId" value={story.id} />
+		<input type="hidden" name="lastPassageText" value={lastPassage.text} />
+		<input type="hidden" name="lastPassageId" value={lastPassage.id} />
+		<button type="submit">Go</button>
+	</form>
+	<!-- {/if} -->
+
+	<!-- {#if lastPassage.links}
+		<nav>
+			{#each lastPassage.links as link}
+				<button on:click={story.nextPassage({ id: link.pid })}>{link.name}</button>
+			{/each}
+		</nav>
+	{:else}
+		<button on:click={story.nextPassage()}>Next</button>
+	{/if} -->
+
+	<audio {src} controls />
+</article>
+
+<!-- <Story {story} /> -->

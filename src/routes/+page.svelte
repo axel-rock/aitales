@@ -1,11 +1,8 @@
-<script lang="ts">
-	import { onMount } from 'svelte'
-	import type { PageData } from './$types'
-	import Story from './stories/Story.svelte'
+<h1 class="hero center">The ultimate blend of technology and storytelling.</h1>
 
-	export let data: PageData
-</script>
+<h2 class="center">Beta coming very soon</h2>
 
-<p class="text-center">
-	<a href="/stories" class="button">Explore our stories</a>
-</p>
+<nav class="center">
+	<a href="https://twitter.com/aitalesapp" class="button">Follow us on Twitter</a>
+	<a href="https://forms.gle/UjEUvnEMjqT1CJYKA" class="button contrast">Join the waitlist</a>
+</nav>

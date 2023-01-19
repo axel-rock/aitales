@@ -5,7 +5,7 @@ import {
 	uploadString as _uploadString,
 	getDownloadURL as _getDownloadURL
 } from 'firebase/storage'
-import { app } from '$lib/firebase'
+import { app } from '$lib/firebase/client'
 
 const storage = getStorage(app)
 
