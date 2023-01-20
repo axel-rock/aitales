@@ -1,6 +1,6 @@
 import { PRIVATE_SPEECH_KEY, PRIVATE_SPEECH_REGION } from '$env/static/private'
 import { SpeechConfig, SpeechSynthesizer } from 'microsoft-cognitiveservices-speech-sdk'
-import { uploadString, uploadBytes } from '$lib/storage'
+import { uploadString, uploadBytes } from '$lib/firebase/storage'
 
 const voices = [
 	{ lang: 'en', gender: 'male', name: 'Davis', id: 'en-US-DavisNeural' },

@@ -25,15 +25,7 @@ export const actions: Actions = {
 
 		const _prompt = improvisePrompt({ lastPassageText, context, prompt, outcome })
 
-		// Je sors un sandwich et j'attaque
-
 		const output = await completion({ prompt: _prompt })
-
-		// console.log(results)
-
-		// console.log(prompt, embedding)
-
-		console.log(output.choices[0].text)
 
 		return {
 			success: true,

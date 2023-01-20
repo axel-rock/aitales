@@ -1,0 +1,84 @@
+header svg,
+header input {
+	display: none;
+}
+
+@media only screen and (max-device-width: 667px) {
+	header {
+		position: relative;
+	}
+
+	header > #logo {
+		z-index: 10;
+	}
+
+	header > input,
+	header > svg {
+		display: unset;
+		position: absolute;
+		right: calc(var(--space) * 1.75);
+		top: calc(var(--space) * 1.75);
+		height: 1.5rem;
+		width: 1.5rem;
+		z-index: 10;
+	}
+
+	header > input {
+		opacity: 0;
+	}
+
+	header > svg {
+		pointer-events: none;
+	}
+
+	header nav {
+		position: fixed;
+		height: 100vh;
+		width: 100vw;
+		top: 0;
+		left: 0;
+		padding: calc(var(--space) * 1.5);
+		padding-top: 5rem;
+		display: flex;
+		flex-direction: column;
+		transform: translateX(-100vh);
+		transition: transform 200ms ease-in-out;
+		background-color: Canvas;
+		z-index: 5;
+	}
+
+	header input:checked ~ nav {
+		transform: translateX(0%);
+	}
+
+	header svg line:nth-of-type(1) {
+		transform-origin: center 6px;
+	}
+
+	header svg line:nth-of-type(2) {
+		transform-origin: center 12px;
+	}
+
+	header svg line:nth-of-type(3) {
+		transform-origin: center 18px;
+	}
+
+	header svg line {
+		transition-duration: 200ms;
+		transition-property: stroke, opacity, transform;
+		transition-timing-function: cubic-bezier(0.9, 0, 0.1, 1);
+	}
+
+	header input:checked ~ svg line:nth-of-type(2) {
+		opacity: 0;
+		transform: scale(0.2);
+	}
+
+	header input:checked ~ svg line:nth-of-type(1) {
+		transform: translate(0, 6px) rotate(45deg);
+	}
+
+	header input:checked ~ svg line:nth-of-type(3) {
+		transform: translate(0, -6px) rotate(-45deg);
+	}
+}

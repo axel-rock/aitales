@@ -1,4 +1,4 @@
-import { getDownloadURL } from '$lib/storage'
+import { getDownloadURL } from '$lib/firebase/storage'
 
 export class Link {
 	name: string

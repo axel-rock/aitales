@@ -27,6 +27,7 @@
 		align-items: center;
 		font-size: var(--font-size-large);
 		font-weight: bolder;
+		white-space: nowrap;
 	}
 
 	canvas {

@@ -1,0 +1,39 @@
+button,
+.button {
+	background-color: ButtonFace;
+	color: ButtonText;
+	cursor: pointer;
+	padding: calc(var(--space) * 0.5) var(--space);
+	border: 0;
+	border-radius: calc(var(--space) * 2);
+	letter-spacing: 0.02em;
+	font-size: 1rem;
+	line-height: 1rem;
+	white-space: nowrap;
+	place-self: baseline;
+}
+
+.center:has(button, .button) :is(button, .button) {
+	justify-self: center;
+}
+
+:is(button, .button).outline {
+	background-color: transparent;
+	border: 2px solid CanvasText;
+	color: CanvasText;
+}
+
+:is(button, .button).contrast {
+	background-color: CanvasText;
+	color: Canvas;
+}
+
+:is(button, .button):hover {
+	background-color: CanvasText;
+	color: Canvas;
+}
+
+:is(button, .button).contrast:hover {
+	background-color: ButtonFace;
+	color: ButtonText;
+}

@@ -1,8 +1,8 @@
-import firebase from 'svelte-adapter-firebase';
-import { vitePreprocess } from '@sveltejs/kit/vite';
+import firebase from 'svelte-adapter-firebase'
+import { vitePreprocess } from '@sveltejs/kit/vite'
 
 const config = {
-	preprocess: vitePreprocess(),
+	preprocess: [vitePreprocess()],
 
 	kit: {
 		// adapter: adapter()
@@ -16,6 +16,6 @@ const config = {
 			// }
 		})
 	}
-};
+}
 
-export default config;
+export default config

@@ -1,10 +1,20 @@
 @import './reset.css';
-@import './vars.css';
+@import './forms.css';
+@import './nav.css';
 
 :root {
-	font-size: 1.1em;
-	font-family: var(--font-family);
+	--font-size: calc(16px * 1.25);
+	--font-size-large: calc(var(--font-size) * 1.25);
+	font-size: var(--font-size);
+	font-family: SF Pro Text, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue,
+		Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol,
+		Noto Color Emoji;
+
+	--space: 1rem;
+
 	color-scheme: light dark;
+	transition-duration: 125ms;
+	transition-timing-function: ease-out;
 }
 
 body {
@@ -14,7 +24,7 @@ body {
 
 header,
 footer {
-	padding: var(--space-large);
+	padding: calc(var(--space) * 1.5);
 	display: grid;
 	gap: var(--space);
 	align-items: center;
@@ -24,7 +34,35 @@ main {
 	display: flex;
 	flex-direction: column;
 	gap: var(--space);
-	padding-inline: var(--space-large);
+	padding-inline: calc(var(--space) * 1.5);
+}
+
+main:has(article) {
+	max-width: 70ch;
+	place-self: center;
+}
+
+article,
+section {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space);
+}
+
+h1 {
+	line-height: 1em;
+	font-weight: 600;
+}
+
+h2 {
+	font-weight: 600;
+	line-height: 1.25;
+}
+
+p {
+	line-height: 1.5;
+	font-weight: 500;
+	opacity: 0.8;
 }
 
 a {
@@ -50,18 +88,47 @@ form {
 }
 
 .surface {
-	background-color: inherit;
 	filter: brightness(120%);
-	padding: var(--space);
+	padding: calc(var(--space) * 1);
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--space) * 0.5);
+	overflow: hidden;
+	border-radius: var(--space);
+}
+
+.surface:before {
+	content: '';
+	opacity: 0.25;
+	background-color: ButtonFace;
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
 }
 
 @media only screen and (min-device-width: 667px) {
+	:root {
+		--space: 1.25rem;
+	}
+
 	header,
 	footer {
 		display: flex;
 		justify-content: space-between;
 	}
+
 	nav {
 		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+	}
+}
+
+@media only screen and (min-device-width: 960px) {
+	:root {
+		--space: 1.5rem;
 	}
 }
