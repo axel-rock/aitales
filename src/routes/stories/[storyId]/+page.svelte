@@ -32,51 +32,51 @@
 	{/if}
 </article>
 
-<!-- {#if lastPassage.tags?.includes('prompt')} -->
-<form
-	method="POST"
-	action="?/prompt"
-	use:enhance={({ form, data, action, cancel }) => {
-		return async ({ result, update }) => {
-			if (result.type === 'success') {
-				progress.update((passages) => {
-					passages.push(
-						new Passage({
-							text: result.data.text,
-							id: Math.random().toString()
-						})
-					)
-					return passages
-				})
+{#if lastPassage.tags?.includes('prompt')}
+	<form
+		method="POST"
+		action="?/prompt"
+		use:enhance={({ form, data, action, cancel }) => {
+			return async ({ result, update }) => {
+				if (result.type === 'success') {
+					progress.update((passages) => {
+						passages.push(
+							new Passage({
+								text: result.data.text,
+								id: Math.random().toString()
+							})
+						)
+						return passages
+					})
+				}
 			}
-		}
-	}}
->
-	<!-- <label for="prompt">What do you want to do?</label> -->
-	<input
-		type="text"
-		id="prompt"
-		name="prompt"
-		placeholder="What do you want to do?"
-		autocomplete="off"
-	/>
-	<input type="hidden" name="storyId" value={story.id} />
-	<input type="hidden" name="lastPassageText" value={lastPassage.text} />
-	<input type="hidden" name="lastPassageId" value={lastPassage.id} />
-	<button type="submit">Go</button>
-</form>
-<!-- {/if} -->
-
-<!-- {#if lastPassage.links}
-	<nav>
+		}}
+	>
+		<!-- <label for="prompt">What do you want to do?</label> -->
+		<input
+			type="text"
+			id="prompt"
+			name="prompt"
+			placeholder="What do you want to do?"
+			autocomplete="off"
+		/>
+		<input type="hidden" name="storyId" value={story.id} />
+		<input type="hidden" name="lastPassageText" value={lastPassage.text} />
+		<input type="hidden" name="lastPassageId" value={lastPassage.id} />
+		<button type="submit">Go</button>
+	</form>
+{:else if lastPassage.links}
+	<nav class="center">
 		{#each lastPassage.links as link}
 			<button on:click={story.nextPassage({ id: link.pid })}>{link.name}</button>
 		{/each}
 	</nav>
 {:else}
-	<button on:click={story.nextPassage()}>Next</button>
-{/if} -->
+	<nav class="center">
+		<button on:click={story.nextPassage()}>Next</button>
+	</nav>
+{/if}
 
-<audio {src} controls />
+<audio {src} controls style="align-self: center;" />
 
 <!-- <Story {story} /> -->

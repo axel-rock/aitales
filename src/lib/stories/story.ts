@@ -41,12 +41,14 @@ export class Story {
 		return 'stories'
 	}
 
-	nextPassage({ id }) {
+	async nextPassage({ id }) {
 		if (id) this.steps.push(id)
 
-		this.progress.set(
-			this.steps.map((stepId) => this.passages.find((passage) => passage.id === stepId))
-		)
+		const passages = await this.passages
+
+		console.log(passages, id)
+
+		this.progress.set(this.steps.map((stepId) => passages.find((passage) => passage.id === stepId)))
 		console.log('nextPassage')
 	}
 }

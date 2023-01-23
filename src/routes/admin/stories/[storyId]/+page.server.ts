@@ -1,7 +1,6 @@
 import type { Actions } from '@sveltejs/kit'
 import { SpeechSynthesis } from '$lib/server/api/microsoft'
 import { firestore } from '$lib/firebase/admin'
-import { doc, setDoc } from 'firebase/firestore'
 import { Passage } from '$lib/stories/passage'
 import { embeddings } from '$lib/server/api/openai'
 
@@ -37,23 +36,30 @@ export const actions: Actions = {
 	},
 
 	generateAudio: async ({ cookies, request }) => {
+		console.log('admin/stories/[storyId]/+page.server.ts', 'start generate audio')
 		let data = await request.formData()
 		data = Object.fromEntries(data.entries())
 
 		const synthesizer = new SpeechSynthesis(data)
 
 		try {
+			console.log('admin/stories/[storyId]/+page.server.ts', 'Start synthesizer')
 			const snapshot = await synthesizer.synthesize()
-			await setDoc(
-				doc(db, data.ref),
-				{ audio: data.path + '.' + SpeechSynthesis.format },
-				{ merge: true }
+			console.log(
+				'admin/stories/[storyId]/+page.server.ts',
+				'Synthesized received. Saving to firestore'
 			)
+			await firestore
+				.doc(data.ref)
+				.set({ audio: data.path + '.' + SpeechSynthesis.format }, { merge: true })
 		} catch (e) {
+			console.log('admin/stories/[storyId]/+page.server.ts', 'Error caught', e)
 			return {
 				success: false
 			}
 		}
+
+		console.log('admin/stories/[storyId]/+page.server.ts', 'Complete')
 
 		return {
 			success: true

@@ -3,7 +3,7 @@ header input {
 	display: none;
 }
 
-@media only screen and (max-device-width: 667px) {
+@media only screen and (max-width: 667px) {
 	header {
 		position: relative;
 	}
@@ -31,7 +31,7 @@ header input {
 		pointer-events: none;
 	}
 
-	header nav {
+	header > nav {
 		position: fixed;
 		height: 100vh;
 		width: 100vw;
@@ -47,38 +47,38 @@ header input {
 		z-index: 5;
 	}
 
-	header input:checked ~ nav {
+	header > input:checked ~ nav {
 		transform: translateX(0%);
 	}
 
-	header svg line:nth-of-type(1) {
+	header > svg line:nth-of-type(1) {
 		transform-origin: center 6px;
 	}
 
-	header svg line:nth-of-type(2) {
+	header > svg line:nth-of-type(2) {
 		transform-origin: center 12px;
 	}
 
-	header svg line:nth-of-type(3) {
+	header > svg line:nth-of-type(3) {
 		transform-origin: center 18px;
 	}
 
-	header svg line {
+	header > svg line {
 		transition-duration: 200ms;
 		transition-property: stroke, opacity, transform;
 		transition-timing-function: cubic-bezier(0.9, 0, 0.1, 1);
 	}
 
-	header input:checked ~ svg line:nth-of-type(2) {
+	header > input:checked ~ svg line:nth-of-type(2) {
 		opacity: 0;
 		transform: scale(0.2);
 	}
 
-	header input:checked ~ svg line:nth-of-type(1) {
+	header > input:checked ~ svg line:nth-of-type(1) {
 		transform: translate(0, 6px) rotate(45deg);
 	}
 
-	header input:checked ~ svg line:nth-of-type(3) {
+	header > input:checked ~ svg line:nth-of-type(3) {
 		transform: translate(0, -6px) rotate(-45deg);
 	}
 }
