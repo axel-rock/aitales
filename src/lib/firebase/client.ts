@@ -4,8 +4,8 @@ import {
 	PUBLIC_PROJECTID,
 	PUBLIC_STORAGEBUCKET,
 	PUBLIC_MESSAGINGSENDERID,
-	PUBLIC_APPID,
-	PUBLIC_MEASUREMENTID
+	PUBLIC_APPID
+	// PUBLIC_MEASUREMENTID
 } from '$env/static/public'
 import {
 	getFirestore,
@@ -14,10 +14,12 @@ import {
 	getDoc as _getDoc,
 	query,
 	collection,
-	QueryConstraint
+	QueryConstraint,
+	onSnapshot
 } from 'firebase/firestore'
 import { initializeApp, getApp, getApps } from 'firebase/app'
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut as _signOut } from 'firebase/auth'
+import { readable } from 'svelte/store'
 
 export const firebaseConfig = {
 	apiKey: PUBLIC_APIKEY,
@@ -58,6 +60,25 @@ export const queryCollection = async (ref: string, ...queries: QueryConstraint[]
 		}
 	})
 }
+
+export const queryCollectionAsReadable = (ref: string, ...queries: QueryConstraint[]) =>
+	readable(null, (set) => {
+		const q = query(collection(db, ref), ...queries)
+		const unsubscribe = onSnapshot(q, (querySnapshot) => {
+			const docs = querySnapshot.docs.map((snapshot) => {
+				return {
+					id: snapshot.id,
+					ref: snapshot.ref,
+					...snapshot.data()
+				}
+			})
+			set(docs)
+		})
+
+		return function stop() {
+			unsubscribe()
+		}
+	})
 
 export const newRef = async (ref: string) => _doc(collection(db, ref))
 

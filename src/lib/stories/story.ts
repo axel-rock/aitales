@@ -1,9 +1,12 @@
-import { getDoc, queryCollection } from '$lib/firebase/client'
+import { getDoc, db, queryCollectionAsReadable } from '$lib/firebase/client'
 import { Passage } from '$lib/stories/passage'
-import { writable, type Writable } from 'svelte/store'
+import type { User } from 'firebase/auth'
+import { doc, limit, setDoc } from 'firebase/firestore'
+import type { Readable } from 'svelte/store'
 
 export class Story {
 	id: string
+	ref: string
 	title: string
 	lang: string
 	categories?: [string]
@@ -11,26 +14,49 @@ export class Story {
 	startPassageId: string
 	steps: [string]
 
-	passages: Promise<Passage[]>
+	// passages: Promise<Passage[]>
+	// progress: Writable<Passage[]>
 
-	progress: Writable<Passage[]>
+	progress: [string]
 
-	constructor(params: any) {
+	passages: Readable<any>
+
+	constructor(params: any, user?: User) {
 		this.id = params.id
+		this.ref = params.ref
 		this.title = params.title
 		this.categories = params.categories
 		this.lang = params.lang
 		this.startPassageId = params.startPassageId || '1'
-		this.steps = params.steps || [this.startPassageId]
 
-		this.progress = writable([])
+		this.progress = [`${Story.collection}/${this.id}/${Passage.collection}/${this.startPassageId}`]
 
-		this.passages = new Promise(async (resolve) => {
-			let passages = await queryCollection(`${Story.collection}/${params.id}/${Passage.collection}`)
-			passages = passages.map((passage) => new Passage(passage))
-			this.progress.set([passages.at(0)])
-			resolve(passages)
-		})
+		this.passages = queryCollectionAsReadable(
+			`${Story.collection}/${this.id}/${Passage.collection}`,
+			limit(1)
+		)
+	}
+
+	async getFirstPassage() {
+		const passageDoc = await getDoc(
+			`${Story.collection}/${this.id}/${Passage.collection}`,
+			this.startPassageId
+		)
+		return new Passage(passageDoc as Passage)
+	}
+
+	static async init(baseStory: Story, user: User) {
+		const story = new Story(baseStory, user)
+		story.ref = `users/${user.uid}/${Story.collection}/${story.id}`
+		// await story.save()
+
+		// this.passages = queryCollectionAsReadable(
+		// 	`${Story.collection}/${story.id}/${Passage.collection}`,
+		// 	where('id', '==', story.startPassageId),
+		// 	limit(1)
+		// )
+
+		return story
 	}
 
 	static async getFromId(id: string) {
@@ -50,5 +76,16 @@ export class Story {
 
 		this.progress.set(this.steps.map((stepId) => passages.find((passage) => passage.id === stepId)))
 		console.log('nextPassage')
+	}
+
+	async save() {
+		console.log('save', this.ref)
+		return setDoc(doc(db, this.ref), {
+			id: this.id,
+			title: this.title,
+			categories: this.categories,
+			lang: this.lang,
+			startPassageId: this.startPassageId
+		})
 	}
 }

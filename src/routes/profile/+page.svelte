@@ -1,11 +1,13 @@
 <script lang="ts">
 	import type { PageData } from './$types'
 	import { signOut } from '$lib/stores/auth'
+	import type { User } from 'firebase/auth'
 
 	export let data: PageData
+	let user: User = data.user
 </script>
 
-<h1>{data.user?.name}</h1>
-<p>{data.user?.email}</p>
+<h1>{user?.displayName}</h1>
+<p>{user?.email}</p>
 
 <a href="/" on:click={signOut} class="button">Logout</a>

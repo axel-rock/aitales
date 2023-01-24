@@ -1,5 +1,4 @@
 <script lang="ts">
-	// import '../css/app.css'
 	import type { LayoutData } from './$types'
 	import { page } from '$app/stores'
 	import Logo from '$lib/components/Logo.svelte'
@@ -45,7 +44,7 @@
 		{/if}
 		<a href="/datasets" class:active={$page.url.pathname === '/datasets'}>Datasets</a>
 		{#if user}
-			<a href="/profile" class="button outline">{user?.name}</a>
+			<a href="/profile" class="button outline">{user?.displayName}</a>
 		{:else}
 			<a href="/" on:click={signIn}>Login</a>
 		{/if}

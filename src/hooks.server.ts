@@ -1,5 +1,6 @@
 import type { Handle } from '@sveltejs/kit'
 import { auth, firestore } from '$lib/firebase/admin'
+import type { DecodedIdToken, UserRecord } from 'firebase-admin/auth'
 
 export const handle: Handle = async ({ event, resolve }) => {
 	const { cookies, locals } = event
@@ -7,10 +8,14 @@ export const handle: Handle = async ({ event, resolve }) => {
 	if (cookies.get('token')) {
 		try {
 			const token = cookies.get('token')
-			const user = token ? await auth.verifyIdToken(token) : null
-			locals.user = user
+			let user: DecodedIdToken | UserRecord | null = token ? await auth.verifyIdToken(token) : null
+			user = user ? await auth.getUser(user.uid) : null
+			locals.user = user?.toJSON()
 			if (user) {
-				locals.access = await (await firestore.collection('access').doc(user.uid).get()).data()
+				const accessSnapshot = await firestore.collection('access').doc(user.uid).get()
+				let access = accessSnapshot.data()
+				access = { ...access, public: true }
+				locals.access = access
 			}
 		} catch (e) {
 			cookies.set('token', '', { maxAge: -1 })

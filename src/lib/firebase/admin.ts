@@ -10,6 +10,7 @@ function makeApp() {
 	if (apps.length > 0) {
 		return apps[0]!
 	}
+
 	return initializeApp({
 		credential: cert({
 			privateKey: FIREBASE_ADMIN_PRIVATE_KEY,
@@ -23,3 +24,9 @@ function makeApp() {
 export const firebase = makeApp()
 export const firestore = getFirestore()
 export const auth = getAuth(firebase)
+
+export const getUserFromCookieToken = async (token: string) => {
+	const user = token ? await auth.verifyIdToken(token) : null
+	if (!user) return null
+	return auth.getUser(user.uid)
+}

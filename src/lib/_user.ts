@@ -56,27 +56,3 @@ export class User {
 	// 	return this.private.email
 	// }
 }
-
-export const currentUser = readable<User | null>(null, (set) => {
-	const unsubscribe = auth.onAuthStateChanged(async (_user: FirebaseUser | null) => {
-		if (_user) {
-			const user = new User(_user)
-			await user.ready
-			await user.sync()
-
-			set(user)
-		} else {
-			set(null)
-		}
-	})
-	return () => unsubscribe()
-})
-
-export const getCurrentUser = () =>
-	new Promise((resolve) => {
-		currentUser.subscribe((user) => {
-			if (user) {
-				resolve(user)
-			}
-		})
-	})

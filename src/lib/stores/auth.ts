@@ -17,7 +17,6 @@ export async function signIn() {
 
 if (browser) {
 	auth.onIdTokenChanged(async (newUser) => {
-		console.log('lib/stores/auth.ts', { newUser })
 		const tokenCurrentlySet = cookie.parse(document.cookie)['token'] !== undefined
 		const token = newUser ? await newUser?.getIdToken() : undefined
 		document.cookie = cookie.serialize('token', token ?? '', {

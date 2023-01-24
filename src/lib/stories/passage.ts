@@ -7,18 +7,19 @@ export class Link {
 }
 
 export class Passage {
-	private _text?: string
-	private _audio?: string
+	id: string
+	text: string
+	audio?: string
 	links?: Link[]
 	tags?: string[]
 	vector?: number[]
 
-	constructor({ id, pid, text, links, tags, audio, vector }) {
-		this.id = id || pid
+	constructor({ id, text, links, tags, audio, vector }) {
+		this.id = id
 		this.links = links
 		this.tags = tags
-		this._text = text
-		this._audio = audio
+		this.text = text
+		this.audio = audio
 		this.vector = vector
 	}
 
@@ -26,31 +27,17 @@ export class Passage {
 		return 'passages'
 	}
 
-	get pid() {
-		return this.id
-	}
-
-	get text() {
+	static cleanText(text: string) {
 		const regexs = [/\[\[.*?\]\]/g, /\{\{(.*?)\}\}(.*?)\{\{(.*?)\}\}/g]
-		return this._text.replaceAll(regexs[0], '').trim() // remove double brackets
+		return text.replaceAll(regexs[0], '').trim() // remove double brackets
 		// .replaceAll(regexs[1], '') // remove variables
 	}
 
-	get audio() {
-		if (this._audio) return getDownloadURL(this._audio)
-		return this._audio
+	get cleanText() {
+		return Passage.cleanText(this.text)
 	}
 
 	asObject() {
-		return Object.fromEntries(
-			Object.entries({
-				id: this.id,
-				text: this._text,
-				links: this.links,
-				tags: this.tags,
-				audio: this._audio,
-				vector: this.vector
-			}).filter(([_, v]) => v != null)
-		)
+		return { ...this }
 	}
 }

@@ -1,9 +1,33 @@
 import type { Actions } from './$types'
 import { embeddings, completion } from '$lib/server/api/openai'
 import { query } from '$lib/server/api/pinecone'
-import { firestore } from '$lib/firebase/admin'
+import { firestore, getUserFromCookieToken } from '$lib/firebase/admin'
+import { Playthrough } from '$lib/stories/playthrough'
+import type { User } from 'firebase/auth'
 
 export const actions: Actions = {
+	continue: async ({ cookies, request }) => {
+		const user = await getUserFromCookieToken(cookies.get('token') as string)
+		const data = await request.formData()
+		const storyId = data.get('storyId')
+		const nextPassageId = data.get('nextPassageId')
+		const playthroughId = data.get('playthroughId')
+
+		let playthrough
+
+		if (!playthroughId) {
+			playthrough = await Playthrough.fromStoryIdAndUser(storyId as string, user as User)
+			playthrough.addPassageId(nextPassageId as string)
+			await playthrough.save()
+		} else {
+			// playthrough =
+			console.log('Playthrough exists')
+		}
+
+		return {
+			success: true
+		}
+	},
 	prompt: async ({ cookies, request }) => {
 		const data = await request.formData()
 

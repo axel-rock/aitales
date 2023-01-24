@@ -41,8 +41,8 @@ header input {
 		padding-top: 5rem;
 		display: flex;
 		flex-direction: column;
-		transform: translateX(-100vh);
-		transition: transform 200ms ease-in-out;
+		transform: translateX(-120vh);
+		transition: transform 200ms ease;
 		background-color: Canvas;
 		z-index: 5;
 	}
