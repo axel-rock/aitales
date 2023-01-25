@@ -3,11 +3,11 @@
 	import { enhance } from '$app/forms'
 	import { Passage } from '$lib/stories/passage'
 	import { Story } from '$lib/stories/story'
+	import { getDownloadURL } from '$lib/firebase/storage'
 
 	export let data: PageData
 
-	let { story } = data
-	let { passages } = story
+	let { story, passages } = data
 
 	let json: string = ''
 
@@ -32,12 +32,10 @@
 	</form>
 </div>
 
-{#await passages}
-	<span>Loading...</span>
-{:then passages}
-	{#each passages as passage}
-		<div id="passage-{passage.pid}" class="surface">
-			<p>{passage.text}</p>
+{#if $passages?.length}
+	{#each $passages as passage}
+		<div id="passage-{passage.id}" class="surface">
+			<p>{Passage.cleanText(passage.text)}</p>
 			{#if passage.links}
 				<nav>
 					{#each passage.links as link}
@@ -47,7 +45,7 @@
 			{/if}
 
 			{#if passage.audio}
-				{#await passage.audio}
+				{#await getDownloadURL(passage.audio)}
 					<p>waiting for the promise to resolve...</p>
 				{:then audio}
 					<audio src={audio} controls />
@@ -59,23 +57,21 @@
 					<input
 						type="hidden"
 						name="path"
-						value={[Story.collection, story.id, story.lang, passage.pid].join('/')}
+						value={[Story.collection, story.id, story.lang, passage.id].join('/')}
 					/>
 					<input
 						type="hidden"
 						name="ref"
-						value={[Story.collection, story.id, Passage.collection, passage.pid].join('/')}
+						value={[Story.collection, story.id, Passage.collection, passage.id].join('/')}
 					/>
 					<input type="hidden" name="lang" value={story.lang} />
-					<input type="hidden" name="text" value={passage.text} />
+					<input type="hidden" name="text" value={Passage.cleanText(passage.text)} />
 					<!-- <input type="hidden" name="user" value={$currentUser?.uid} /> -->
-					<input type="submit" value="Generate audio" />
+					<button type="submit">Generate Audio</button>
 				</form>
 			{/if}
 		</div>
 	{/each}
-
-	{#if passages?.length <= 0}
-		<p>No passages yet.</p>
-	{/if}
-{/await}
+{:else}
+	<p>No passages yet.</p>
+{/if}

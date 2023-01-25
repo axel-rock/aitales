@@ -1,7 +1,4 @@
-// import { Playthrough } from '$lib/stories/playthrough'
 import { db, getDoc } from '$lib/firebase/client'
-import type { Playthrough } from '$lib/stories/playthrough'
-import type { Story } from '$lib/stories/story'
 import { doc, onSnapshot } from 'firebase/firestore'
 import { readable } from 'svelte/store'
 import type { PageLoad } from './$types'

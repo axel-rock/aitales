@@ -6,7 +6,6 @@ export const load = (async ({ params, parent }) => {
 
 	return {
 		story,
-		passages: story.passages,
-		progress: story.progress
+		passages: story.passages
 	}
 }) satisfies PageLoad

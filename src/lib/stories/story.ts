@@ -12,7 +12,6 @@ export class Story {
 	categories?: [string]
 
 	startPassageId: string
-	steps: [string]
 
 	// passages: Promise<Passage[]>
 	// progress: Writable<Passage[]>
@@ -21,7 +20,7 @@ export class Story {
 
 	passages: Readable<any>
 
-	constructor(params: any, user?: User) {
+	constructor(params: any, user?: User, numberOfPassages?: number) {
 		this.id = params.id
 		this.ref = params.ref
 		this.title = params.title
@@ -33,7 +32,7 @@ export class Story {
 
 		this.passages = queryCollectionAsReadable(
 			`${Story.collection}/${this.id}/${Passage.collection}`,
-			limit(1)
+			limit(numberOfPassages)
 		)
 	}
 
@@ -45,8 +44,8 @@ export class Story {
 		return new Passage(passageDoc as Passage)
 	}
 
-	static async init(baseStory: Story, user: User) {
-		const story = new Story(baseStory, user)
+	static async init(baseStory: Story, user: User, numberOfPassages?: number) {
+		const story = new Story(baseStory, user, numberOfPassages)
 		story.ref = `users/${user.uid}/${Story.collection}/${story.id}`
 		// await story.save()
 
@@ -67,19 +66,7 @@ export class Story {
 		return 'stories'
 	}
 
-	async nextPassage({ id }) {
-		if (id) this.steps.push(id)
-
-		const passages = await this.passages
-
-		console.log(passages, id)
-
-		this.progress.set(this.steps.map((stepId) => passages.find((passage) => passage.id === stepId)))
-		console.log('nextPassage')
-	}
-
 	async save() {
-		console.log('save', this.ref)
 		return setDoc(doc(db, this.ref), {
 			id: this.id,
 			title: this.title,

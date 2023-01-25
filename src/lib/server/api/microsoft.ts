@@ -1,6 +1,7 @@
 import { PRIVATE_SPEECH_KEY, PRIVATE_SPEECH_REGION } from '$env/static/private'
 import { SpeechConfig, SpeechSynthesizer } from 'microsoft-cognitiveservices-speech-sdk'
-import { uploadString, uploadBytes } from '$lib/firebase/storage'
+import { uploadBytes } from '$lib/firebase/storage'
+import { bucket } from '$lib/firebase/admin'
 
 const voices = [
 	{ lang: 'en', gender: 'male', name: 'Davis', id: 'en-US-DavisNeural' },
@@ -39,6 +40,11 @@ export class SpeechSynthesis {
 				(result) => {
 					synthesizer.close()
 					resolve(uploadBytes(this.path + '.' + SpeechSynthesis.format, result.audioData))
+					// resolve(
+					// 	bucket
+					// 		.file(this.path + '.' + SpeechSynthesis.format)
+					// 		.save(new Uint8Array(result.audioData))
+					// )
 				},
 				(error) => {
 					synthesizer.close()

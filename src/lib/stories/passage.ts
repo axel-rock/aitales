@@ -8,19 +8,25 @@ export class Link {
 
 export class Passage {
 	id: string
+	pid?: string
 	text: string
 	audio?: string
 	links?: Link[]
 	tags?: string[]
 	vector?: number[]
+	timestamp?: any
+	type?: string
 
-	constructor({ id, text, links, tags, audio, vector }) {
-		this.id = id
+	constructor({ id, pid, text, links, tags, audio, vector, timestamp, type }: Passage) {
+		this.id = pid || id
+		this.text = text
+
+		this.audio = audio
 		this.links = links
 		this.tags = tags
-		this.text = text
-		this.audio = audio
 		this.vector = vector
+		this.timestamp = timestamp
+		this.type = type
 	}
 
 	static get collection() {
@@ -37,7 +43,7 @@ export class Passage {
 		return Passage.cleanText(this.text)
 	}
 
-	asObject() {
-		return { ...this }
+	get asObject() {
+		return JSON.parse(JSON.stringify(this))
 	}
 }

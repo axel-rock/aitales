@@ -4,66 +4,102 @@ import { query } from '$lib/server/api/pinecone'
 import { firestore, getUserFromCookieToken } from '$lib/firebase/admin'
 import { Playthrough } from '$lib/stories/playthrough'
 import type { User } from 'firebase/auth'
+import type { Passage } from '$lib/stories/passage'
 
 export const actions: Actions = {
 	continue: async ({ cookies, request }) => {
 		const user = await getUserFromCookieToken(cookies.get('token') as string)
-		const data = await request.formData()
-		const storyId = data.get('storyId')
-		const nextPassageId = data.get('nextPassageId')
-		const playthroughId = data.get('playthroughId')
 
-		let playthrough
+		const { storyId, nextPassageId, playthroughId } = Object.fromEntries(await request.formData())
+
+		let playthrough: Playthrough
 
 		if (!playthroughId) {
 			playthrough = await Playthrough.fromStoryIdAndUser(storyId as string, user as User)
-			playthrough.addPassageId(nextPassageId as string)
-			await playthrough.save()
 		} else {
-			// playthrough =
-			console.log('Playthrough exists')
+			playthrough = await Playthrough.getFromId(playthroughId as string)
 		}
+
+		console.log('continue')
+
+		playthrough.addPassageId(nextPassageId as string)
+		await playthrough.save()
 
 		return {
 			success: true
 		}
 	},
-	prompt: async ({ cookies, request }) => {
-		const data = await request.formData()
 
-		const lastPassageId = data.get('lastPassageId')
-		const storyId = data.get('storyId')
-		const prompt = data.get('prompt')
-		const vector = await embeddings(prompt)
+	prompt: async ({ cookies, request }) => {
+		const { playthroughId, lastPassageId, lastPassageRef, lastPassageText, storyId, input } =
+			Object.fromEntries(await request.formData())
+
+		let playthrough: Playthrough
+		if (!playthroughId) {
+			playthrough = await Playthrough.fromStoryIdAndUser(storyId as string, user as User)
+		} else {
+			playthrough = await Playthrough.getFromId(playthroughId as string)
+		}
+
+		// await playthrough.addPassageFromRef(lastPassageRef as string)
+
+		await playthrough.addInput(input as string)
+
+		const vector = await embeddings(input as string)
 
 		let lastPassage = await firestore.doc(`stories/${storyId}/passages/${lastPassageId}`).get()
 		lastPassage = lastPassage.data()
 
 		const outcome = await getClosestOutcome({ vector, lastPassage, storyId })
 
-		const lastPassageText = data.get('lastPassageText')
-
 		let context = await query(vector)
-		console.log(context)
 		context = context.matches.map((entry) => entry.metadata.text)
 
-		const _prompt = improvisePrompt({ lastPassageText, context, prompt, outcome })
+		const prompt = improvisePrompt({ lastPassageText, context, input, outcome })
 
-		const output = await completion({ prompt: _prompt })
+		// await playthrough.addPrompt(prompt)
+
+		const output = await completion({ prompt: prompt })
+
+		await playthrough.addCompletion(output.choices[0].text)
+
+		await playthrough.addPassageFromRef(outcome.ref.path)
 
 		return {
 			success: true,
 			text: output.choices[0].text
 		}
+	},
+
+	reset: async ({ cookies, request }) => {
+		const data = await request.formData()
+		const playthroughId = data.get('playthroughId')
+		const playthrough = await Playthrough.getFromId(playthroughId as string)
+
+		await playthrough.reset()
+
+		return {
+			success: true
+		}
 	}
 }
 
-function improvisePrompt({ lastPassageText, context, prompt, outcome }) {
+function improvisePrompt({
+	lastPassageText,
+	context,
+	input,
+	outcome
+}: {
+	lastPassageText: string
+	context: string[]
+	input: string
+	outcome: Passage
+}) {
 	return `[We are in a text based RPG. You are the GM. I am the hero. Don't ask questions. Speak with a storyteller tone, in the same language as me. Bridge the gap]
 	Possible context: "${context[0]}"
 	Last chapter: "${lastPassageText}"
 	Next chapter: "${outcome.text}"
-	Here is what I want to do: "${prompt}"
+	Here is what I want to do: "${input}"
 	What happens between Last Chapter and Next chapter?`
 }
 
@@ -77,7 +113,9 @@ async function getClosestOutcome({ vector, lastPassage, storyId }) {
 		)
 		.get()
 	return possibleOutcomes.docs
-		.map((doc) => doc.data())
+		.map((doc) => {
+			return { id: doc.id, ref: doc.ref, ...doc.data() }
+		})
 		.map((passage) => {
 			return { ...passage, similarity: cosineSimilarity(passage.vector, vector) }
 		})

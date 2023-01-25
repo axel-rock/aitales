@@ -25,8 +25,8 @@ async function getStories(user: User) {
 
 	const stories = Promise.all(
 		storiesSnapshot.map(async (story) => {
-			if (user) return Story.init(story, user)
-			else return new Story(story)
+			if (user) return Story.init(story, user, 1)
+			else return new Story(story, null, 1)
 		})
 	)
 

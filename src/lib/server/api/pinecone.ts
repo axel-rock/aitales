@@ -5,7 +5,7 @@ const environment = 'us-west1-gcp'
 export const query = async (vector: number[]) => {
 	const project = 'open-ai-embeddings-1652e37'
 
-	console.log(vector)
+	// console.log(vector)
 
 	try {
 		const response = await fetch(`https://${project}.svc.${environment}.pinecone.io/query`, {

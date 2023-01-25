@@ -24,13 +24,14 @@ export const actions: Actions = {
 
 		await Promise.all(
 			passages.map(async (passage) => {
-				console.log('stories', storyId, 'passages', passage.pid)
+				console.log('stories', storyId, 'passages', passage.id)
 				passage.vector = await embeddings(passage.text)
-				return firestore.doc(`stories/${storyId}/passages/${passage.pid}`).set(passage.asObject())
+
+				return firestore.doc(`stories/${storyId}/passages/${passage.id}`).set(passage.asObject)
 			})
 		)
 
-		console.log(passages)
+		// console.log(passages)
 
 		return {}
 	},
@@ -49,6 +50,7 @@ export const actions: Actions = {
 				'admin/stories/[storyId]/+page.server.ts',
 				'Synthesized received. Saving to firestore'
 			)
+			console.log(data.ref)
 			await firestore
 				.doc(data.ref)
 				.set({ audio: data.path + '.' + SpeechSynthesis.format }, { merge: true })
