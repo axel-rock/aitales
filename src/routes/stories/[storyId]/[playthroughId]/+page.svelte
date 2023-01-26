@@ -9,9 +9,10 @@
 
 	$: lastPassage = $passages?.at(-1)
 
+	let root
 	let src = null
 	let autoplay = false
-	autoplay = true
+	// autoplay = true
 
 	passages.subscribe(async (passages) => {
 		if (
@@ -23,17 +24,25 @@
 		)
 			src = await getDownloadURL(passages.at(-1).audio)
 		else if (passages?.at(-2)?.audio) src = await getDownloadURL(passages.at(-2).audio)
+
+		if (root) {
+			const passagesEl = root.querySelectorAll('.passage')
+			const lastPassageEl = passagesEl[passagesEl.length - 1]
+			if (lastPassageEl) lastPassageEl.scrollIntoView({ behavior: 'smooth' })
+		}
 	})
 </script>
 
-<article>
+<article bind:this={root}>
 	<!-- <Heading tag="h1" customSize="text-2xl font-medium">{story.title}</Heading> -->
 	<h1>{story.title}</h1>
 
 	{#if $passages?.length}
 		{#each $passages as passage, index}
 			{#if passage.type !== 'prompt' && $passages?.at(index - 1)?.type !== 'completion'}
-				<p id="passage-{passage.pid}" class={passage.type}>{Passage.cleanText(passage.text)}</p>
+				<p id="passage-{passage.pid}" class="passage {passage.type}">
+					{Passage.cleanText(passage.text)}
+				</p>
 			{/if}
 		{/each}
 	{:else}
@@ -56,6 +65,7 @@
 			id="input"
 			name="input"
 			placeholder="What do you want to do?"
+			required
 			autocomplete="off"
 		/>
 		{#if playthrough?.id}

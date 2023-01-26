@@ -29,3 +29,7 @@
 		</a>
 	{/each}
 </section>
+
+<p class="center">
+	You have a coupon? <a href="/redeem">Redeem it here</a>.
+</p>

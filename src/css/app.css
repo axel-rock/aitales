@@ -3,7 +3,7 @@
 @import './nav.css';
 
 :root {
-	--font-size: calc(16px * 1.25);
+	--font-size: calc(16px * 1.1);
 	--font-size-large: calc(var(--font-size) * 1.25);
 	font-size: var(--font-size);
 	font-family: SF Pro Text, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue,
@@ -67,14 +67,18 @@ p {
 	opacity: 0.8;
 }
 
+nav {
+	display: grid;
+	gap: var(--space);
+}
+
 a {
 	color: inherit;
 	text-decoration: none;
 }
 
-nav {
-	display: grid;
-	gap: var(--space);
+p > a {
+	text-decoration: underline;
 }
 
 form {

@@ -38,15 +38,17 @@
 	</svg>
 
 	<nav>
-		<a href="/stories" class:active={$page.url.pathname === '/stories'}>Stories</a>
+		{#if user}
+			<a href="/stories" class:active={$page.url.pathname === '/stories'}>Stories</a>
+		{/if}
 		{#if access?.admin}
 			<a href="/admin" class:active={$page.url.pathname === '/admin'}>Admin</a>
+			<a href="/datasets" class:active={$page.url.pathname === '/datasets'}>Datasets</a>
 		{/if}
-		<a href="/datasets" class:active={$page.url.pathname === '/datasets'}>Datasets</a>
 		{#if user}
 			<a href="/profile" class="button outline">{user?.displayName}</a>
 		{:else}
-			<a href="/" on:click={signIn}>Login</a>
+			<a style="cursor: pointer" on:click={signIn}>Login</a>
 		{/if}
 	</nav>
 </header>

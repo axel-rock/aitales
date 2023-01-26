@@ -7,7 +7,7 @@ import type { User } from 'firebase/auth'
 export const load = (async ({ parent }) => {
 	const { user, access } = await parent()
 	return {
-		stories: await getStories(user),
+		stories: await getStories(user, access),
 		playthroughs: await getPlaythroughs(user)
 	}
 }) satisfies LayoutLoad
@@ -16,10 +16,11 @@ async function getPlaythroughs(user: User) {
 	return queryCollection('playthroughs', where('userId', '==', user.uid), limit(10))
 }
 
-async function getStories(user: User) {
+async function getStories(user: User, access: any) {
+	access = Object.keys(access)
 	const storiesSnapshot = await queryCollection(
 		'stories',
-		// where(),
+		where('access', 'array-contains-any', access),
 		limit(10)
 	)
 
