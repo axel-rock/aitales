@@ -6,3 +6,9 @@
 	<a href="https://twitter.com/aitalesapp" class="button">Follow us on Twitter</a>
 	<a href="https://forms.gle/UjEUvnEMjqT1CJYKA" class="button contrast">Join the waitlist</a>
 </nav>
+
+<style>
+	.hero {
+		font-size: calc(var(--font-size) * 3.75);
+	}
+</style>
