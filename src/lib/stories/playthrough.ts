@@ -23,9 +23,10 @@ export class Playthrough {
 
 	addPassageId(passageId: string) {
 		this.passagesRef.push(`${this.story.ref}/${Passage.collection}/${passageId}`)
+		return this.save()
 	}
 
-	async addPassageFromRef(ref: string) {
+	addPassageFromRef(ref: string) {
 		this.passagesRef.push(ref)
 		return this.save()
 	}

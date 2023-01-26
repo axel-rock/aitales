@@ -3,7 +3,12 @@
 
 	export let data: PageData
 
-	const { stories } = data
+	let { stories, playthroughs } = data
+
+	function getPlaythrough(story) {
+		const playthrough = playthroughs.find((playthrough) => playthrough.storyId === story.id)
+		return playthrough ? '/' + playthrough.id : ''
+	}
 </script>
 
 <p class="balance-text">
@@ -13,7 +18,7 @@
 
 <section>
 	{#each stories as story}
-		<a href="/stories/{story.id}">
+		<a href="/stories/{story.id}{getPlaythrough(story)}">
 			<article>
 				<h1>{story.title}</h1>
 				<p>
