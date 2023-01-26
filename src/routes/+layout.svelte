@@ -43,7 +43,7 @@
 		{/if}
 		{#if access?.admin}
 			<a href="/admin" class:active={$page.url.pathname === '/admin'}>Admin</a>
-			<a href="/datasets" class:active={$page.url.pathname === '/datasets'}>Datasets</a>
+			<!-- <a href="/datasets" class:active={$page.url.pathname === '/datasets'}>Datasets</a> -->
 		{/if}
 		{#if user}
 			<a href="/profile" class="button outline">{user?.displayName}</a>
