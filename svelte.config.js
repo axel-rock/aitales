@@ -1,6 +1,6 @@
-import firebase from 'svelte-adapter-firebase'
+// import firebase from 'svelte-adapter-firebase'
 import { vitePreprocess } from '@sveltejs/kit/vite'
-import adapter from '@sveltejs/adapter-cloudflare'
+import adapter from '@sveltejs/adapter-vercel'
 
 const config = {
 	preprocess: [vitePreprocess()],
