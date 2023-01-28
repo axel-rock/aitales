@@ -31,6 +31,8 @@ export const firebaseConfig = {
 	// measurementId: PUBLIC_MEASUREMENTID
 }
 
+console.log(firebaseConfig)
+
 export const makeApp: () => FirebaseApp = () => {
 	if (getApps().length) return getApp()
 	return initializeApp(firebaseConfig)
