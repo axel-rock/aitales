@@ -15,6 +15,11 @@
 	})
 </script>
 
+<svelte:head>
+	<title>{title}</title>
+	<meta name="description" content="The ultimate blend of technology and storytelling." />
+</svelte:head>
+
 <header>
 	<Logo {title} />
 
@@ -53,7 +58,7 @@
 	</nav>
 </header>
 
-<main>
+<main class:hero={$page.url.pathname === '/'}>
 	<slot />
 </main>
 
@@ -82,4 +87,8 @@
 
 <style global>
 	@import '../css/app.css';
+
+	main.hero {
+		place-self: center;
+	}
 </style>
