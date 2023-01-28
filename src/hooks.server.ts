@@ -8,7 +8,10 @@ export const handle: Handle = async ({ event, resolve }) => {
 	if (cookies.get('token')) {
 		try {
 			const token = cookies.get('token')
-			let user: DecodedIdToken | UserRecord | null = token ? await auth.verifyIdToken(token) : null
+			// let user: DecodedIdToken | UserRecord | null = token ? await auth.verifyIdToken(token) : null
+			let user: DecodedIdToken | UserRecord | null = token
+				? await auth.verifySessionCookie(token)
+				: null
 			user = user ? await auth.getUser(user.uid) : null
 			locals.user = user?.toJSON()
 			if (user) {

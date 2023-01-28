@@ -2,7 +2,7 @@
 	import type { LayoutData } from './$types'
 	import { page } from '$app/stores'
 	import Logo from '$lib/components/Logo.svelte'
-	import { signIn } from '$lib/stores/auth'
+	import { signIn } from '$lib/firebase/auth'
 	import { afterNavigate } from '$app/navigation'
 
 	export let title = 'Ai Tales'
@@ -14,6 +14,10 @@
 		if (checkbox) checkbox.checked = false
 	})
 </script>
+
+<svelte:head>
+	<title>{title}</title>
+</svelte:head>
 
 <header>
 	<Logo {title} />

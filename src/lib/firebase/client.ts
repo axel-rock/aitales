@@ -17,7 +17,7 @@ import {
 	QueryConstraint,
 	onSnapshot
 } from 'firebase/firestore'
-import { initializeApp, getApp, getApps } from 'firebase/app'
+import { initializeApp, getApp, getApps, type FirebaseApp } from 'firebase/app'
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut as _signOut } from 'firebase/auth'
 import { readable } from 'svelte/store'
 
@@ -30,8 +30,6 @@ export const firebaseConfig = {
 	appId: PUBLIC_APPID
 	// measurementId: PUBLIC_MEASUREMENTID
 }
-
-console.log(firebaseConfig)
 
 export const makeApp: () => FirebaseApp = () => {
 	if (getApps().length) return getApp()
@@ -74,7 +72,7 @@ export const queryCollectionAsReadable = (ref: string, ...queries: QueryConstrai
 					...snapshot.data()
 				}
 			})
-			set(docs)
+			set(docs as any)
 		})
 
 		return function stop() {

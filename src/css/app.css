@@ -44,6 +44,10 @@ main {
 	padding-inline: calc(var(--space) * 1.5);
 }
 
+/* main:has(> .hero) {
+	place-self: center;
+} */
+
 article,
 section {
 	display: flex;

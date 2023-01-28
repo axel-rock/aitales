@@ -1,6 +1,6 @@
 import { cert, getApps, initializeApp } from 'firebase-admin/app'
 import { getFirestore } from 'firebase-admin/firestore'
-import { getAuth } from 'firebase-admin/auth'
+import { getAuth, UserRecord } from 'firebase-admin/auth'
 import { getStorage } from 'firebase-admin/storage'
 import { PUBLIC_PROJECTID, PUBLIC_STORAGEBUCKET } from '$env/static/public'
 
@@ -29,7 +29,14 @@ export const auth = getAuth(firebase)
 export const bucket = getStorage(firebase).bucket(PUBLIC_STORAGEBUCKET)
 
 export const getUserFromCookieToken = async (token: string) => {
-	const user = token ? await auth.verifyIdToken(token) : null
+	// const user = token ? await auth.verifyIdToken(token) : null
+	const user = token ? await auth.verifySessionCookie(token) : null
 	if (!user) return null
 	return auth.getUser(user.uid)
+}
+
+export const getAccess = async (user: UserRecord) => {
+	const accessSnapshot = await firestore.collection('access').doc(user.uid).get()
+	const access = accessSnapshot.data()
+	return { ...access, public: true }
 }
