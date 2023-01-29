@@ -38,7 +38,7 @@ export class Playthrough {
 			.collection(Passage.collection)
 			.doc()
 
-		const audio = await this.generateAudio(text, passageDoc.path)
+		const audio = await this.generateAudio(Passage.cleanText(text), passageDoc.path)
 
 		const passage = new Passage({
 			id: passageDoc.id,
@@ -75,8 +75,7 @@ export class Playthrough {
 		})
 
 		try {
-			const snapshot = await synthesizer.synthesize()
-			return path + '.' + SpeechSynthesis.format
+			return synthesizer.synthesize()
 		} catch (e) {
 			console.log('lib/stories/playthrough.ts', 'Error generating audio:', e)
 			return null
@@ -116,15 +115,15 @@ export class Playthrough {
 			.doc(playthroughId)
 			.get()
 		const playthroughData = playthroughDoc.data()
-		const user = await (
-			await firestore.collection('users').doc(playthroughData.userId).get()
-		).data()
+		const user = (
+			await firestore.collection('users').doc(playthroughData?.userId).get()
+		).data() as User
 
 		return Playthrough.fromStoryIdAndUser(
-			playthroughData.storyId,
+			playthroughData?.storyId,
 			user,
 			playthroughId,
-			playthroughData.passagesRef
+			playthroughData?.passagesRef
 		)
 	}
 

@@ -24,6 +24,12 @@
 <h1>{story.title}</h1>
 
 <div>
+	<legend>
+		<p>
+			Use <a href="https://github.com/lazerwalker/twison" target="_blank">Twison</a> story format to
+			generate the correct output
+		</p></legend
+	>
 	<form method="POST" action="?/jsonToPassages" use:enhance>
 		<label for="json">Paste your JSON file here</label>
 		<textarea name="json" bind:value={json} rows="10" />
@@ -35,7 +41,7 @@
 {#if $passages?.length}
 	{#each $passages as passage}
 		<div id="passage-{passage.id}" class="surface">
-			<p>{Passage.cleanText(passage.text)}</p>
+			<p class="passage">{Passage.cleanText(passage.text)}</p>
 			{#if passage.links}
 				<nav>
 					{#each passage.links as link}
@@ -44,34 +50,39 @@
 				</nav>
 			{/if}
 
-			{#if passage.audio}
-				{#await getDownloadURL(passage.audio)}
+			{#if passage.audio?.path}
+				{#await getDownloadURL(passage.audio.path)}
 					<p>waiting for the promise to resolve...</p>
 				{:then audio}
 					<audio src={audio} controls />
 				{:catch error}
 					<p>Something went wrong: {error.message}</p>
 				{/await}
-			{:else}
-				<form method="POST" action="?/generateAudio" use:enhance>
-					<input
-						type="hidden"
-						name="path"
-						value={[Story.collection, story.id, story.lang, passage.id].join('/')}
-					/>
-					<input
-						type="hidden"
-						name="ref"
-						value={[Story.collection, story.id, Passage.collection, passage.id].join('/')}
-					/>
-					<input type="hidden" name="lang" value={story.lang} />
-					<input type="hidden" name="text" value={Passage.cleanText(passage.text)} />
-					<!-- <input type="hidden" name="user" value={$currentUser?.uid} /> -->
-					<button type="submit">Generate Audio</button>
-				</form>
 			{/if}
+			<form method="POST" action="?/generateAudio" use:enhance>
+				<input
+					type="hidden"
+					name="path"
+					value={[Story.collection, story.id, story.lang, passage.id].join('/')}
+				/>
+				<input
+					type="hidden"
+					name="ref"
+					value={[Story.collection, story.id, Passage.collection, passage.id].join('/')}
+				/>
+				<input type="hidden" name="lang" value={story.lang} />
+				<input type="hidden" name="text" value={Passage.cleanText(passage.text)} />
+				<!-- <input type="hidden" name="user" value={$currentUser?.uid} /> -->
+				<button type="submit">Generate Audio</button>
+			</form>
 		</div>
 	{/each}
 {:else}
 	<p>No passages yet.</p>
 {/if}
+
+<style>
+	p.passage {
+		white-space: pre-wrap;
+	}
+</style>

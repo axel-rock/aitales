@@ -45,15 +45,14 @@ export const actions: Actions = {
 
 		try {
 			console.log('admin/stories/[storyId]/+page.server.ts', 'Start synthesizer')
-			const snapshot = await synthesizer.synthesize()
+			const audio = await synthesizer.synthesize()
+			console.log(audio)
 			console.log(
 				'admin/stories/[storyId]/+page.server.ts',
 				'Synthesized received. Saving to firestore'
 			)
 			console.log(data.ref)
-			await firestore
-				.doc(data.ref)
-				.set({ audio: data.path + '.' + SpeechSynthesis.format }, { merge: true })
+			await firestore.doc(data.ref).set({ audio }, { merge: true })
 		} catch (e) {
 			console.log('admin/stories/[storyId]/+page.server.ts', 'Error caught', e)
 			return {

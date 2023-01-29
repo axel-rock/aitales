@@ -2,7 +2,7 @@
 	import { Rive } from '@rive-app/canvas'
 	import { onMount } from 'svelte'
 
-	export let title = 'Data2.ai'
+	export let title = ''
 
 	let canvas: HTMLCanvasElement
 	let rive: Rive

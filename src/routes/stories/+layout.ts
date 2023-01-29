@@ -13,6 +13,7 @@ export const load = (async ({ parent }) => {
 }) satisfies LayoutLoad
 
 async function getPlaythroughs(user: User) {
+	if (!user) return []
 	return queryCollection('playthroughs', where('userId', '==', user.uid), limit(10))
 }
 

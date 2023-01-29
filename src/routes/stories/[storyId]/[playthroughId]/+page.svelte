@@ -3,45 +3,43 @@
 	import { enhance } from '$app/forms'
 	import { Passage } from '$lib/stories/passage'
 	import { getDownloadURL } from '$lib/firebase/storage'
+	import AudioPlayer from '$lib/components/AudioPlayer.svelte'
 
 	export let data: PageData
 	let { story, playthrough, passages } = data
 
-	$: lastPassage = $passages?.at(-1)
+	let root: HTMLElement
+	let src: string | null = null
+	let autoplay: boolean = false
+	autoplay = true
 
-	let root
-	let src = null
-	let autoplay = false
-	// autoplay = true
+	$: lastPassage = $passages?.findLast((passage) => !['input'].includes(passage.type))
 
 	passages.subscribe(async (passages) => {
-		if (
-			passages?.length &&
-			passages?.at(-1)?.audio &&
-			passages?.at(-1)?.type !== 'input' &&
-			passages?.at(-1)?.type !== 'completion' &&
-			passages?.at(-2)?.type !== 'completion'
-		)
-			src = await getDownloadURL(passages.at(-1).audio)
-		else if (passages?.at(-2)?.audio) src = await getDownloadURL(passages.at(-2).audio)
+		// Get last passage with an audio file
+		if (!passages?.length) return
 
 		if (root) {
-			const passagesEl = root.querySelectorAll('.passage')
-			const lastPassageEl = passagesEl[passagesEl.length - 1]
+			const lastPassageEl = root.querySelector('.isLastPassage')
 			if (lastPassageEl) lastPassageEl.scrollIntoView({ behavior: 'smooth' })
 		}
 	})
 </script>
 
 <article bind:this={root}>
-	<!-- <Heading tag="h1" customSize="text-2xl font-medium">{story.title}</Heading> -->
-	<h1>{story.title}</h1>
+	<h1>{story?.title}</h1>
 
 	{#if $passages?.length}
 		{#each $passages as passage, index}
 			{#if passage.type !== 'prompt' && $passages?.at(index - 1)?.type !== 'completion'}
-				<p id="passage-{passage.pid}" class="passage {passage.type}">
-					{Passage.cleanText(passage.text)}
+				<p
+					id="passage-{passage.id}"
+					class="passage {passage.type}"
+					class:isLastPassage={passage.id === lastPassage?.id}
+				>
+					{#if !autoplay || passage.id !== lastPassage?.id}
+						{Passage.cleanText(passage.text)}
+					{/if}
 				</p>
 			{/if}
 		{/each}
@@ -96,7 +94,7 @@
 	<nav class="center">Generating story…</nav>
 {/if}
 
-<audio {src} controls style="align-self: center;" {autoplay} />
+<AudioPlayer container={root} {passages} {autoplay} />
 
 <!-- <Story {story} /> -->
 <style>
@@ -108,14 +106,18 @@
 		white-space: pre-wrap;
 	}
 
+	article > p:not(.isLastPassage) {
+		opacity: 0.25;
+	}
+
 	article > p.input {
 		font-weight: 800;
 		font-style: italic;
 	}
 
-	article > p:hover {
+	/* article > p:hover {
 		opacity: 1;
-	}
+	} */
 
 	form#reset {
 		position: absolute;

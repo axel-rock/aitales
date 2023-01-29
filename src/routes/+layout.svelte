@@ -10,7 +10,7 @@
 	let { user, access } = data
 
 	afterNavigate(() => {
-		const checkbox = document.querySelector('input[type="checkbox"]')
+		const checkbox: HTMLInputElement | null = document.querySelector('input[type="checkbox"]')
 		if (checkbox) checkbox.checked = false
 	})
 </script>

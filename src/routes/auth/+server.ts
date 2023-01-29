@@ -6,14 +6,11 @@ const expiresIn = 1000 * 60 * 60 * 24 * 7
 const secure = dev ? '' : 'Secure;'
 
 export const POST = (async ({ request }) => {
-	console.log('post')
 	const { token } = await request.json()
-	console.log(token)
 	try {
 		const sessionCookie = await auth.createSessionCookie(token, {
 			expiresIn: 60 * 60 * 24 * 5 * 1000
 		})
-		console.log('set-cookie')
 		return new Response(sessionCookie, {
 			status: 200,
 			headers: {

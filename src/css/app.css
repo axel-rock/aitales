@@ -44,9 +44,9 @@ main {
 	padding-inline: calc(var(--space) * 1.5);
 }
 
-/* main:has(> .hero) {
+main:has(> .hero) {
 	place-self: center;
-} */
+}
 
 article,
 section {

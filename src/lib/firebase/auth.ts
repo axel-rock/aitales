@@ -23,6 +23,7 @@ export async function signOut() {
 
 if (browser) {
 	auth.onAuthStateChanged(async (newUser: User | null) => {
+		// console.count('onAuthStateChanged')
 		const tokenCurrentlySet = cookie.parse(document.cookie)['token'] !== undefined
 		const token = newUser ? await newUser?.getIdToken() : undefined
 		console.log(tokenCurrentlySet, token)

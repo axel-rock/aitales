@@ -1,4 +1,5 @@
 import { getDownloadURL } from '$lib/firebase/storage'
+import type { SpeechSynthesisResponse } from '$lib/server/api/microsoft'
 
 export class Link {
 	name: string
@@ -10,16 +11,18 @@ export class Passage {
 	id: string
 	pid?: string
 	text: string
-	audio?: string
+	name: string
+	audio?: SpeechSynthesisResponse
 	links?: Link[]
 	tags?: string[]
 	vector?: number[]
 	timestamp?: any
 	type?: string
 
-	constructor({ id, pid, text, links, tags, audio, vector, timestamp, type }: Passage) {
+	constructor({ id, pid, text, name, links, tags, audio, vector, timestamp, type }: Passage) {
 		this.id = pid || id
 		this.text = text
+		this.name = name
 
 		this.audio = audio
 		this.links = links

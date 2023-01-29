@@ -11,7 +11,7 @@
 
 	let src = null
 	let autoplay = false
-	autoplay = true
+	// autoplay = true
 
 	passages.subscribe(async (passages) => {
 		if (passages?.length && passages?.at(-1)?.audio)
