@@ -11,7 +11,6 @@
 	let root: HTMLElement
 	let src: string | null = null
 	let autoplay: boolean = false
-	autoplay = true
 
 	$: lastPassage = $passages?.findLast((passage) => !['input'].includes(passage.type))
 

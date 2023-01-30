@@ -8,16 +8,18 @@ const secure = dev ? '' : 'Secure;'
 export const POST = (async ({ request }) => {
 	const { token } = await request.json()
 	try {
-		const sessionCookie = await auth.createSessionCookie(token, {
+		const __session = await auth.createSessionCookie(token, {
 			expiresIn: 60 * 60 * 24 * 5 * 1000
 		})
-		return new Response(sessionCookie, {
+		return new Response(__session, {
 			status: 200,
 			headers: {
-				'set-cookie': `token=${sessionCookie}; Max-Age=${expiresIn}; Path=/; HttpOnly; ${secure};`
+				'set-cookie': `__session=${__session}; Max-Age=${expiresIn}; Path=/; HttpOnly; ${secure};`
 			}
 		})
-	} catch (e) {}
+	} catch (e) {
+		// console.log('auth/server.ts', e)
+	}
 	return new Response(null, {
 		status: 500
 	})
@@ -27,7 +29,7 @@ export const DELETE = (async () => {
 	return new Response(null, {
 		status: 200,
 		headers: {
-			'set-cookie': `token=_; Path=/; HttpOnly; Max-Age=0; ${secure};`
+			'set-cookie': `__session=_; Path=/; HttpOnly; Max-Age=0; ${secure};`
 		}
 	})
 }) satisfies RequestHandler

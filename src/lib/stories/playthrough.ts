@@ -1,7 +1,7 @@
 import { firestore } from '$lib/firebase/admin'
 import { SpeechSynthesis } from '$lib/server/api/microsoft'
+import type { UserRecord } from 'firebase-admin/auth'
 import { FieldValue } from 'firebase-admin/firestore'
-import type { User } from 'firebase/auth'
 import { Passage } from './passage'
 import type { Story } from './story'
 
@@ -10,10 +10,10 @@ import type { Story } from './story'
 export class Playthrough {
 	id: string
 	story: Story
-	user: User
+	user: UserRecord
 	passagesRef: [string?]
 
-	constructor(story: Story, user: User, id?: string, passagesRef?: [string?]) {
+	constructor(story: Story, user: UserRecord, id?: string, passagesRef?: [string?]) {
 		this.id = id || firestore.collection(Playthrough.collection).doc().id
 		this.story = story
 		this.user = user
@@ -98,7 +98,7 @@ export class Playthrough {
 
 	static async fromStoryIdAndUser(
 		storyId: string,
-		user: User,
+		user: UserRecord,
 		id?: string,
 		passagesRef?: [string?]
 	) {
@@ -117,7 +117,7 @@ export class Playthrough {
 		const playthroughData = playthroughDoc.data()
 		const user = (
 			await firestore.collection('users').doc(playthroughData?.userId).get()
-		).data() as User
+		).data() as UserRecord
 
 		return Playthrough.fromStoryIdAndUser(
 			playthroughData?.storyId,

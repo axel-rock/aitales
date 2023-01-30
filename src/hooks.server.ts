@@ -3,31 +3,32 @@ import { auth, firestore } from '$lib/firebase/admin'
 import type { DecodedIdToken, UserRecord } from 'firebase-admin/auth'
 
 export const handle: Handle = async ({ event, resolve }) => {
-	const { cookies, locals } = event
+	const { cookies } = event
 
-	if (cookies.get('token')) {
+	const sessionCookie = cookies.get('__session')
+
+	if (sessionCookie) {
 		try {
-			const token = cookies.get('token')
-			// let user: DecodedIdToken | UserRecord | null = token ? await auth.verifyIdToken(token) : null
-			let user: DecodedIdToken | UserRecord | null = token
-				? await auth.verifySessionCookie(token)
-				: null
+			// let user: DecodedIdToken | UserRecord | null = await auth.verifyIdToken(token ?)
+			let user: DecodedIdToken | UserRecord | null = await auth.verifySessionCookie(sessionCookie)
 			user = user ? await auth.getUser(user.uid) : null
-			locals.user = user?.toJSON()
+			event.locals.user = user?.toJSON() as UserRecord
 			if (user) {
 				const accessSnapshot = await firestore.collection('access').doc(user.uid).get()
 				let access = accessSnapshot.data()
 				access = { ...access, public: true }
-				locals.access = access
+				event.locals.access = access
 			}
 		} catch (e) {
 			cookies.set('token', '', { maxAge: -1 })
 		}
 	}
 
-	if (event.url.pathname.startsWith('/admin') && !locals.access?.admin) {
+	if (event.url.pathname.startsWith('/admin') && !event.locals.access?.admin) {
 		return Response.redirect('/', 307)
 	}
+
+	event.locals.access = { public: true, ...event.locals.access }
 
 	return resolve(event)
 }

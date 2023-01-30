@@ -2,22 +2,22 @@ import type { LayoutLoad } from './$types'
 import { limit, where } from 'firebase/firestore'
 import { queryCollection } from '$lib/firebase/client'
 import { Story } from '$lib/stories/story'
-import type { User } from 'firebase/auth'
+import type { UserRecord } from 'firebase-admin/auth'
 
 export const load = (async ({ parent }) => {
 	const { user, access } = await parent()
 	return {
-		stories: await getStories(user, access),
-		playthroughs: await getPlaythroughs(user)
+		stories: await getStories(user as UserRecord, access),
+		playthroughs: await getPlaythroughs(user as UserRecord)
 	}
 }) satisfies LayoutLoad
 
-async function getPlaythroughs(user: User) {
+async function getPlaythroughs(user: UserRecord) {
 	if (!user) return []
 	return queryCollection('playthroughs', where('userId', '==', user.uid), limit(10))
 }
 
-async function getStories(user: User, access: any) {
+async function getStories(user: UserRecord, access: any) {
 	access = Object.keys(access)
 	const storiesSnapshot = await queryCollection(
 		'stories',
@@ -27,8 +27,8 @@ async function getStories(user: User, access: any) {
 
 	const stories = Promise.all(
 		storiesSnapshot.map(async (story) => {
-			if (user) return Story.init(story, user, 1)
-			else return new Story(story, null, 1)
+			if (user) return Story.init(story as any, user as any, 1)
+			else return new Story(story, undefined, 1)
 		})
 	)
 

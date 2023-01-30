@@ -1,0 +1,22 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+  	function canUpload() {
+    	return request.auth != null && 
+      	firestore.exists(/databases/(default)/documents/access/$(request.auth.uid));
+    }
+    
+    match /stories/{allContent=**} {
+      allow read: if true;
+      allow write: if (true);
+      // allow write: if canUpload();
+    }
+    
+    match /playthroughs/{allContent=**} {
+      allow read: if true;
+      allow write: if (true);
+      // allow write: if canUpload();
+    }
+    
+  }
+}

@@ -1,21 +1,18 @@
 import type { Actions } from './$types'
-import { embeddings, completion } from '$lib/server/api/openai'
-import { query } from '$lib/server/api/pinecone'
-import { firestore, getUserFromCookieToken } from '$lib/firebase/admin'
+import { getUserFromSessionCookie } from '$lib/firebase/admin'
 import { Playthrough } from '$lib/stories/playthrough'
-import type { User } from 'firebase/auth'
-import type { Passage } from '$lib/stories/passage'
 import { redirect } from '@sveltejs/kit'
+import type { UserRecord } from 'firebase-admin/auth'
 
 export const actions: Actions = {
 	continue: async ({ cookies, request }) => {
-		const user = await getUserFromCookieToken(cookies.get('token') as string)
+		const user = await getUserFromSessionCookie(cookies.get('__session') as string)
 
 		const { storyId, nextPassageId } = Object.fromEntries(await request.formData())
 
 		const playthrough: Playthrough = await Playthrough.fromStoryIdAndUser(
 			storyId as string,
-			user as User
+			user as UserRecord
 		)
 
 		await playthrough.addPassageId(nextPassageId as string)

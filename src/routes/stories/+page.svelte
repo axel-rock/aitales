@@ -1,12 +1,13 @@
 <script lang="ts">
+	import type { Story } from '$lib/stories/story'
 	import type { PageData } from './$types'
 
 	export let data: PageData
 
 	let { stories, playthroughs } = data
 
-	function getPlaythrough(story) {
-		const playthrough = playthroughs.find((playthrough) => playthrough.storyId === story.id)
+	function getPlaythrough(story: Story) {
+		const playthrough = playthroughs.find((playthrough: any) => playthrough.storyId === story.id)
 		return playthrough ? '/' + playthrough.id : ''
 	}
 </script>

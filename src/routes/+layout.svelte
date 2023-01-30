@@ -2,7 +2,6 @@
 	import type { LayoutData } from './$types'
 	import { page } from '$app/stores'
 	import Logo from '$lib/components/Logo.svelte'
-	import { signIn } from '$lib/firebase/auth'
 	import { afterNavigate } from '$app/navigation'
 
 	export let title = 'Ai Tales'
@@ -50,9 +49,9 @@
 			<!-- <a href="/datasets" class:active={$page.url.pathname === '/datasets'}>Datasets</a> -->
 		{/if}
 		{#if user}
-			<a href="/profile" class="button outline">{user?.displayName}</a>
+			<a href="/user" class="button outline">{user?.displayName}</a>
 		{:else}
-			<a style="cursor: pointer" on:click={signIn}>Login</a>
+			<a href="/user">Login</a>
 		{/if}
 	</nav>
 </header>

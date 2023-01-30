@@ -1,10 +1,10 @@
-import { firestore, getUserFromCookieToken } from '$lib/firebase/admin'
+import { firestore, getUserFromSessionCookie } from '$lib/firebase/admin'
 import { error } from '@sveltejs/kit'
 import type { Actions } from './$types'
 
 export const actions = {
 	default: async ({ cookies, request }) => {
-		const user = await getUserFromCookieToken(cookies.get('token') as string)
+		const user = await getUserFromSessionCookie(cookies.get('__session') as string)
 		const { code } = Object.fromEntries(await request.formData())
 
 		if (!user) throw error(401, 'Please log in to redeem a coupon')

@@ -28,8 +28,7 @@ export const firestore = getFirestore()
 export const auth = getAuth(firebase)
 export const bucket = getStorage(firebase).bucket(PUBLIC_STORAGEBUCKET)
 
-export const getUserFromCookieToken = async (token: string) => {
-	// const user = token ? await auth.verifyIdToken(token) : null
+export const getUserFromSessionCookie = async (token: string) => {
 	const user = token ? await auth.verifySessionCookie(token) : null
 	if (!user) return null
 	return auth.getUser(user.uid)
