@@ -39,6 +39,13 @@
 </div>
 
 {#if $passages?.length}
+	<form method="POST" action="?/generateAllAudio">
+		<input type="hidden" name="path" value={[Story.collection, story.id, story.lang].join('/')} />
+		<input type="hidden" name="ref" value={[Story.collection, story.id].join('/')} />
+		<input type="hidden" name="lang" value={story.lang} />
+		<button type="submit">Generate All Audio</button>
+	</form>
+
 	{#each $passages as passage}
 		<div id="passage-{passage.id}" class="surface">
 			<p class="passage">{Passage.cleanText(passage.text)}</p>
@@ -63,7 +70,7 @@
 				<input
 					type="hidden"
 					name="path"
-					value={[Story.collection, story.id, story.lang, passage.id].join('/')}
+					value={[Story.collection, story.id, story.lang, passage.name || passage.id].join('/')}
 				/>
 				<input
 					type="hidden"

@@ -37,33 +37,55 @@ export const actions: Actions = {
 	},
 
 	generateAudio: async ({ cookies, request }) => {
-		console.log('admin/stories/[storyId]/+page.server.ts', 'start generate audio')
 		let data = await request.formData()
 		data = Object.fromEntries(data.entries())
 
+		// To Do: Check if user is logged in and record its usage
 		const synthesizer = new SpeechSynthesis(data)
 
 		try {
-			console.log('admin/stories/[storyId]/+page.server.ts', 'Start synthesizer')
 			const audio = await synthesizer.synthesize()
-			console.log(audio)
-			console.log(
-				'admin/stories/[storyId]/+page.server.ts',
-				'Synthesized received. Saving to firestore'
-			)
-			console.log(data.ref)
 			await firestore.doc(data.ref).set({ audio }, { merge: true })
 		} catch (e) {
-			console.log('admin/stories/[storyId]/+page.server.ts', 'Error caught', e)
 			return {
 				success: false
 			}
 		}
 
-		console.log('admin/stories/[storyId]/+page.server.ts', 'Complete')
-
 		return {
 			success: true
 		}
+	},
+
+	generateAllAudio: async ({ request }) => {
+		const data = await request.formData()
+		const { path, ref, lang } = Object.fromEntries(data.entries())
+
+		console.log(data)
+
+		const passagesSnapshot = await firestore
+			.doc(ref as string)
+			.collection(Passage.collection)
+			.get()
+
+		await Promise.all(
+			passagesSnapshot.docs.map(async (doc) => {
+				const passage = doc.data() as Passage
+				const synthesisOptions = {
+					text: Passage.cleanText(passage.text),
+					path: `${path}/${passage.name || passage.id}`,
+					lang
+				}
+				const synthesizer = new SpeechSynthesis(synthesisOptions)
+				const audio = await synthesizer.synthesize()
+				return firestore
+					.doc(ref as string)
+					.collection(Passage.collection)
+					.doc(passage.id)
+					.set({ audio }, { merge: true })
+			})
+		)
+
+		console.log('done')
 	}
 }
