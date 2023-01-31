@@ -24,14 +24,16 @@ export const actions: Actions = {
 
 		await Promise.all(
 			passages.map(async (passage) => {
-				console.log('stories', storyId, 'passages', passage.id)
 				passage.vector = await embeddings(passage.text)
-
-				return firestore.doc(`stories/${storyId}/passages/${passage.id}`).set(passage.asObject)
+				if (passage.tags?.includes('prompt') && passage.links?.length > 0) {
+					for (let index = 0; index < passage.links.length; index++) {
+						const link = passage.links[index]
+						passage.links[index].vector = await embeddings(passage.links[index].name)
+					}
+				}
+				firestore.doc(`stories/${storyId}/passages/${passage.id}`).set(passage.asObject)
 			})
 		)
-
-		// console.log(passages)
 
 		return {}
 	},
@@ -60,8 +62,6 @@ export const actions: Actions = {
 	generateAllAudio: async ({ request }) => {
 		const data = await request.formData()
 		const { path, ref, lang } = Object.fromEntries(data.entries())
-
-		console.log(data)
 
 		const passagesSnapshot = await firestore
 			.doc(ref as string)

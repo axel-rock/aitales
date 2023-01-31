@@ -2,7 +2,7 @@ import { PRIVATE_PINECONE_API_KEY } from '$env/static/private'
 
 const environment = 'us-west1-gcp'
 
-export const query = async (vector: number[]) => {
+export const query = async (vector: number[], limit = 1) => {
 	const project = 'open-ai-embeddings-1652e37'
 
 	// console.log(vector)
@@ -17,7 +17,7 @@ export const query = async (vector: number[]) => {
 			// body: '{\n    "vector": [0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3],\n    "topK": 3,\n    "includeValues": true\n  }',
 			body: JSON.stringify({
 				vector,
-				topK: 5,
+				topK: limit,
 				includeMetadata: true,
 				includeValues: false
 			})

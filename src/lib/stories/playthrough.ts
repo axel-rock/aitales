@@ -2,7 +2,7 @@ import { firestore } from '$lib/firebase/admin'
 import { SpeechSynthesis } from '$lib/server/api/microsoft'
 import type { UserRecord } from 'firebase-admin/auth'
 import { FieldValue } from 'firebase-admin/firestore'
-import { Passage } from './passage'
+import { Link, Passage } from './passage'
 import type { Story } from './story'
 
 // This class should only be used on the server
@@ -31,20 +31,31 @@ export class Playthrough {
 		return this.save()
 	}
 
-	async addPassageFromText(text: string, type?: string) {
+	async createPassageFromRefWithText(ref: string, text: string) {
+		const passageDoc = await firestore.doc(ref).get()
+		const passage = new Passage(passageDoc.data() as Passage)
+
+		return this.addPassageFromText(text, 'completion', passage.links, passage.tags)
+	}
+
+	async addPassageFromText(text: string, type?: string, links?: Link[], tags?: string[]) {
 		const passageDoc = firestore
 			.collection(Playthrough.collection)
 			.doc(this.id)
 			.collection(Passage.collection)
 			.doc()
 
-		const audio = await this.generateAudio(Passage.cleanText(text), passageDoc.path)
+		let audio
+		if (type !== 'input' && type !== 'prompt')
+			audio = await this.generateAudio(Passage.cleanText(text), passageDoc.path)
 
 		const passage = new Passage({
 			id: passageDoc.id,
 			text,
 			audio,
 			type,
+			links,
+			tags,
 			timestamp: FieldValue.serverTimestamp()
 		} as Passage)
 

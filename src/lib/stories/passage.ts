@@ -5,6 +5,7 @@ export class Link {
 	name: string
 	url: string
 	pid: string
+	vector?: [number]
 }
 
 export class Passage {

@@ -10,13 +10,17 @@
 	export let passagesElements: Passage[]
 	export let autoplay: boolean = true
 
-	$: currentPassage = $passages?.findLast((passage: PassageType) => passage.audio)
+	// $: currentPassage = $passages?.findLast((passage: PassageType) => passage.audio)
+	$: currentPassage = $passages?.at(-1)
 	$: currentPassageElement = passagesElements?.find(
 		(passageElement) => passageElement?.passage?.id === currentPassage?.id
 	)
 	$: src = currentPassage?.audio?.path ? getDownloadURL(currentPassage.audio.path) : null
 
 	function ontimeupdate(event: Event) {
+		container.querySelectorAll('.is-playing').forEach((element) => {
+			element.classList.remove('is-playing')
+		})
 		const audio = event.target as HTMLAudioElement
 		if (currentPassageElement) {
 			currentPassageElement.container.classList.add('is-playing')

@@ -17,7 +17,7 @@
 	}
 </script>
 
-<section bind:this={container} class={passage.type}>
+<section id="passage-{passage.id}" bind:this={container} class={passage.type}>
 	<p class:isLast>{Passage.cleanText(passage.text)}</p>
 	<p bind:this={shadowText} class="shadow" />
 
@@ -36,6 +36,7 @@
 				<input type="hidden" name="playthroughId" value={playthrough?.id} />
 				<input type="hidden" name="storyId" value={story.id} />
 				<input type="hidden" name="lastPassageText" value={passage.text} />
+				<input type="hidden" name="lastPassageRef" value={passage.ref.path} />
 				<input type="hidden" name="lastPassageId" value={passage.id} />
 				<button type="submit">Go</button>
 			</form>
@@ -52,13 +53,17 @@
 			</nav>
 		{/if}
 
-		{#if passage.type === 'input'}
+		{#if passage.type === 'input' || passage.type === 'prompt'}
 			<nav class="center">Generating story…</nav>
 		{/if}
 	{/if}
 </section>
 
 <style>
+	section.prompt > p {
+		display: none;
+	}
+
 	p:not(.isLast) {
 		opacity: 0.5;
 	}
@@ -71,7 +76,7 @@
 		white-space: pre-wrap;
 	}
 
-	p.shadow {
+	.is-playing p.shadow {
 		position: absolute;
 		opacity: 0.8;
 	}
