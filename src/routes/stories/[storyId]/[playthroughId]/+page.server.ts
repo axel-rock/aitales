@@ -25,12 +25,11 @@ export const actions: Actions = {
 	},
 
 	prompt: async ({ cookies, request }) => {
-		const { playthroughId, lastPassageId, lastPassageRef, lastPassageText, storyId, input } =
-			Object.fromEntries(await request.formData()) as StringMap
+		const { playthroughId, lastPassageId, lastPassageText, storyId, input } = Object.fromEntries(
+			await request.formData()
+		) as StringMap
 
 		const playthrough: Playthrough = await Playthrough.getFromId(playthroughId as string)
-
-		// await playthrough.addPassageFromRef(lastPassageRef as string)
 
 		await playthrough.addInput(input as string)
 

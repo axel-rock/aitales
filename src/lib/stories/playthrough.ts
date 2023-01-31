@@ -91,8 +91,16 @@ export class Playthrough {
 		})
 	}
 
-	reset() {
-		this.passagesRef.splice(1)
+	async reset() {
+		const passagesToDelete = this.passagesRef.splice(1)
+		await Promise.all(
+			passagesToDelete.map((ref) => {
+				if (ref?.startsWith(Playthrough.collection)) {
+					return firestore.doc(ref).delete()
+				}
+				return Promise.resolve()
+			})
+		)
 		return this.save()
 	}
 

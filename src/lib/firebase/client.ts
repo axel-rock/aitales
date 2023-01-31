@@ -82,6 +82,20 @@ export const queryCollectionAsReadable = (ref: string, ...queries: QueryConstrai
 
 export const newRef = async (ref: string) => _doc(collection(db, ref))
 
-export const signInWithGoogle = () => signInWithPopup(auth, new GoogleAuthProvider())
+export const signInWithGoogle = async () => {
+	const credentials = await signInWithPopup(auth, new GoogleAuthProvider())
+	const token = await credentials.user?.getIdToken(true)
+	await fetch('/auth', {
+		method: 'POST',
+		body: JSON.stringify({ token })
+	})
+	document.location.reload()
+}
 
-export const signOut = () => _signOut(auth)
+export const signOut = async () => {
+	await _signOut(auth)
+	await fetch('/auth', {
+		method: 'DELETE'
+	})
+	document.location.reload()
+}

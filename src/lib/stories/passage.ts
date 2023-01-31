@@ -17,7 +17,7 @@ export class Passage {
 	tags?: string[]
 	vector?: number[]
 	timestamp?: any
-	type?: string
+	type: string
 
 	constructor({ id, pid, text, name, links, tags, audio, vector, timestamp, type }: Passage) {
 		this.id = pid || id

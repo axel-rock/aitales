@@ -9,6 +9,15 @@ const voices = [
 	{ lang: 'fr', gender: 'male', name: 'Jerome', id: 'fr-FR-JeromeNeural' }
 ]
 
+export type Boundary = {
+	type: string
+	audioOffset: number
+	duration: number
+	text: string
+	textOffset: number
+	wordLength: number
+}
+
 export type SpeechSynthesisResponse = {
 	path: string
 	boundaries?: any[]
@@ -46,14 +55,14 @@ export class SpeechSynthesis {
 			speechConfig.speechSynthesisVoiceName = this.voice.id
 			const synthesizer = new SpeechSynthesizer(speechConfig)
 
-			const boundaries: any[] = []
+			const boundaries: Boundary[] = []
 
 			synthesizer.wordBoundary = (s, e) => {
 				// console.log('wordBoundary', s, e)
 				boundaries.push({
 					type: e.boundaryType,
-					audioOffset: e.audioOffset,
-					duration: e.duration,
+					audioOffset: SpeechSynthesis.timeInTicksToSeconds(e.audioOffset),
+					duration: SpeechSynthesis.timeInTicksToSeconds(e.duration),
 					text: e.text,
 					textOffset: e.textOffset,
 					wordLength: e.wordLength
@@ -99,5 +108,9 @@ export class SpeechSynthesis {
 			hash |= 0 // Convert to 32bit integer
 		}
 		return hash
+	}
+
+	static timeInTicksToSeconds(timeInTicks: number): number {
+		return timeInTicks / 10000000
 	}
 }

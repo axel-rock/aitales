@@ -2,19 +2,28 @@
 	import { page } from '$app/stores'
 	import { enhance } from '$app/forms'
 	import type { PageData } from './$types'
-	import { error } from '@sveltejs/kit'
+	import { signInWithGoogle } from '$lib/firebase/client'
 
 	export let data: PageData
+
+	const { user } = data
 
 	let infos: any
 
 	$: code = $page.url.searchParams.get('code')
 </script>
 
-<h1>Redeem</h1>
+<h1>Redeem a code</h1>
+
+{#if !user}
+	<p>You must login before using your code</p>
+
+	<button on:click={signInWithGoogle} class="button">Sign in with Google</button>
+{/if}
 
 <form
 	method="POST"
+	class:disabled={!user}
 	use:enhance={({ form, data, action, cancel }) => {
 		// `form` is the `<form>` element
 		// `data` is its `FormData` object
@@ -29,8 +38,15 @@
 		}
 	}}
 >
-	<input type="text" id="code" name="code" placeholder="Enter your code here" value={code} />
-	<button type="submit">Redeem</button>
+	<input
+		type="text"
+		id="code"
+		name="code"
+		placeholder="Enter your code here"
+		value={code}
+		disabled={!user}
+	/>
+	<button type="submit" disabled={!user}>Redeem</button>
 </form>
 
 {#if infos}
@@ -42,6 +58,10 @@
 {/if}
 
 <style>
+	form.disabled {
+		opacity: 0.5;
+	}
+
 	p.success {
 		color: green;
 	}

@@ -1,30 +1,26 @@
 <script lang="ts">
 	import { getDownloadURL } from '$lib/firebase/storage'
-	import { Passage } from '$lib/stories/passage'
-	import { onMount } from 'svelte'
+	import type { Boundary } from '$lib/server/api/microsoft'
+	import { Passage as PassageType } from '$lib/stories/passage'
+	import type Passage from '$lib/components/Passage.svelte'
 	import type { Readable } from 'svelte/store'
 
 	export let container: HTMLElement
-	export let passages: Readable<Passage[] | null>
+	export let passages: Readable<PassageType[] | null>
+	export let passagesElements: Passage[]
 	export let autoplay: boolean = false
 
-	let index = -1
-
-	$: currentPassage = $passages?.findLast((passage) => passage.audio)
+	$: currentPassage = $passages?.findLast((passage: PassageType) => passage.audio)
+	$: currentPassageElement = passagesElements?.find(
+		(passageElement) => passageElement.passage.id === currentPassage?.id
+	)
 	$: src = currentPassage?.audio?.path ? getDownloadURL(currentPassage.audio.path) : null
 
-	onMount(async () => {
-		console.log('ready!')
-	})
-
-	function timeupdate(event: Event) {
+	function ontimeupdate(event: Event) {
 		const audio = event.target as HTMLAudioElement
-
-		// console.log(currentPassage?.audio?.boundaries)
-
-		const passageElement = container.querySelector(`#passage-${currentPassage?.id}`)
-		if (passageElement) {
-			const passageText = Passage.cleanText(currentPassage?.text)
+		if (currentPassageElement) {
+			currentPassageElement.container.classList.add('is-playing')
+			const passageText = PassageType.cleanText(currentPassage?.text)
 			const boundary = findCurrentBoundary(audio.currentTime)
 			let sliceAt = boundary?.textOffset + boundary?.wordLength + 1
 			let text = passageText.slice(0, sliceAt)
@@ -32,13 +28,15 @@
 			let lineBreaks = (text.match(/\n/g) || []).length
 			// if (boundary?.type === 'PunctuationBoundary') lineBreaks +- 1
 			text = passageText.slice(0, sliceAt - lineBreaks)
-			passageElement.innerHTML = text
+			currentPassageElement.shadowText.innerHTML = text
 		}
-		// const passage = $passages?.find((passage) => passage.audio?.path === audio.src)
-		// if (!passage) return
-		// const passageEl = container.querySelector(`#passage-${passage.pid}`)
-		// if (!passageEl) return
-		// passageEl.classList.toggle('active', audio.currentTime > passage.audio.start)
+	}
+
+	function onpause(event: Event) {
+		if (currentPassageElement) {
+			currentPassageElement.container.classList.remove('is-playing')
+			currentPassageElement.shadowText.innerHTML = ''
+		}
 	}
 
 	function scrollIntoView(event: Event) {
@@ -48,11 +46,10 @@
 	}
 
 	function findCurrentBoundary(time: number) {
-		time *= 1000 * 1000 * 10
-		time += 2500000
+		time += 0.25
 		const boundaries = currentPassage?.audio?.boundaries
 		if (!boundaries) return null
-		return boundaries?.findLast((boundary) => time >= boundary.audioOffset)
+		return boundaries?.findLast((boundary: Boundary) => time >= boundary.audioOffset)
 	}
 </script>
 
@@ -64,7 +61,8 @@
 		controls
 		style="align-self: center;"
 		{autoplay}
-		on:timeupdate={timeupdate}
+		on:timeupdate={ontimeupdate}
+		on:pause={onpause}
 		on:play={scrollIntoView}
 	/>
 {/await}
