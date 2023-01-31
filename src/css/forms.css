@@ -1,5 +1,9 @@
 button,
 .button {
+	display: flex;
+	gap: calc(var(--space) * 0.25);
+	justify-content: center;
+	align-items: center;
 	background-color: ButtonFace;
 	color: ButtonText;
 	cursor: pointer;
@@ -36,4 +40,13 @@ button,
 :is(button, .button).contrast:hover {
 	background-color: ButtonFace;
 	color: ButtonText;
+}
+
+:is(button, .button) svg {
+	width: 1rem;
+	height: 1rem;
+}
+
+:is(button, .button) svg path {
+	fill: currentColor;
 }

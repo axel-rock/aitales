@@ -43,6 +43,7 @@
 			<nav class="center">
 				{#each passage.links as link}
 					<form method="POST" action="?/continue" use:enhance>
+						<input type="hidden" name="storyId" value={story?.id} />
 						<input type="hidden" name="playthroughId" value={playthrough?.id} />
 						<input type="hidden" name="nextPassageId" value={link.pid} />
 						<button type="submit">{link.name}</button>

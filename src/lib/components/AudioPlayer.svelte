@@ -8,11 +8,11 @@
 	export let container: HTMLElement
 	export let passages: Readable<PassageType[] | null>
 	export let passagesElements: Passage[]
-	export let autoplay: boolean = false
+	export let autoplay: boolean = true
 
 	$: currentPassage = $passages?.findLast((passage: PassageType) => passage.audio)
 	$: currentPassageElement = passagesElements?.find(
-		(passageElement) => passageElement.passage.id === currentPassage?.id
+		(passageElement) => passageElement?.passage?.id === currentPassage?.id
 	)
 	$: src = currentPassage?.audio?.path ? getDownloadURL(currentPassage.audio.path) : null
 
@@ -24,10 +24,7 @@
 			const boundary = findCurrentBoundary(audio.currentTime)
 			let sliceAt = boundary?.textOffset + boundary?.wordLength + 1
 			let text = passageText.slice(0, sliceAt)
-			// Count the amount line breaks in passageText
-			let lineBreaks = (text.match(/\n/g) || []).length
-			// if (boundary?.type === 'PunctuationBoundary') lineBreaks +- 1
-			text = passageText.slice(0, sliceAt - lineBreaks)
+			text = passageText.slice(0, sliceAt)
 			currentPassageElement.shadowText.innerHTML = text
 		}
 	}

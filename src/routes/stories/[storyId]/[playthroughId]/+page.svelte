@@ -4,10 +4,8 @@
 
 	export let data: PageData
 	let { story, playthrough, passages } = data
-
-	let autoplay: boolean = false
 </script>
 
 {#if story && playthrough}
-	<Playthrough {story} {playthrough} {passages} {autoplay} />
+	<Playthrough {story} {playthrough} {passages} />
 {/if}
