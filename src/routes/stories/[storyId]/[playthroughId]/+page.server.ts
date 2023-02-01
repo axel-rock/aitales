@@ -6,6 +6,7 @@ import { Playthrough } from '$lib/stories/playthrough'
 import type { User } from 'firebase/auth'
 import { type Link, Passage } from '$lib/stories/passage'
 import { ref } from 'firebase/storage'
+import { error } from '@sveltejs/kit'
 
 interface StringMap {
 	[key: string]: string
@@ -26,50 +27,56 @@ export const actions: Actions = {
 	},
 
 	prompt: async ({ cookies, request }) => {
-		const { playthroughId, lastPassageId, lastPassageRef, lastPassageText, storyId, input } =
-			Object.fromEntries(await request.formData()) as StringMap
+		try {
+			const { playthroughId, lastPassageId, lastPassageRef, lastPassageText, storyId, input } =
+				Object.fromEntries(await request.formData()) as StringMap
 
-		const playthrough: Playthrough = await Playthrough.getFromId(playthroughId as string)
+			const playthrough: Playthrough = await Playthrough.getFromId(playthroughId as string)
 
-		await playthrough.addInput(input as string)
+			await playthrough.addInput(input as string)
 
-		const vectorForOutcome = await embeddings(input as string)
-		const vectorForContext = await embeddings([lastPassageText, input].join(' '))
+			const vectorForOutcome = await embeddings(input as string)
+			const vectorForContext = await embeddings([lastPassageText, input].join(' '))
 
-		const lastPassageDoc = await firestore
-			.doc(lastPassageRef || `stories/${storyId}/passages/${lastPassageId}`)
-			.get()
-		const lastPassage = lastPassageDoc.data() as Passage
+			const lastPassageDoc = await firestore
+				.doc(lastPassageRef || `stories/${storyId}/passages/${lastPassageId}`)
+				.get()
+			const lastPassage = lastPassageDoc.data() as Passage
 
-		const outcome: any = await getClosestOutcome({
-			vector: vectorForOutcome,
-			lastPassage,
-			storyId,
-			previousPassages: playthrough.passagesRef
-		})
-		const temperature = mapNumberFromARangeToAnother(outcome.similarity, 0.66, 1, 1, 0)
-		// Do something with outcome.similarity. 1 is perfect match, Bellow 0.8 is not a good match
+			const outcome: any = await getClosestOutcome({
+				vector: vectorForOutcome,
+				lastPassage,
+				storyId,
+				previousPassages: playthrough.passagesRef
+			})
+			const temperature = mapNumberFromARangeToAnother(outcome.similarity, 0.66, 1, 1, 0)
+			// Do something with outcome.similarity. 1 is perfect match, Bellow 0.8 is not a good match
 
-		let context = await query(vectorForContext, 3)
-		context = context.matches.map((entry: any) => entry.metadata.text)
+			let context = await query(vectorForContext, 3)
+			context = context.matches.map((entry: any) => entry.metadata.text)
 
-		// console.log(outcome)
+			// console.log(outcome)
 
-		const prompt = improvisePrompt({ lastPassageText, context, input, outcome })
+			const prompt = improvisePrompt({ lastPassageText, context, input, outcome })
 
-		await playthrough.addPrompt(prompt)
+			await playthrough.addPrompt(prompt)
 
-		const output = await completion({ prompt: prompt, temperature })
-		const outputText = output.choices[0].text
+			const output = await completion({ prompt: prompt, temperature })
+			const outputText = output.choices[0].text
 
-		await playthrough.createPassageFromRefWithText(outcome.ref.path, outputText)
+			await playthrough.createPassageFromRefWithText(outcome.ref.path, outputText)
 
-		// await playthrough.addCompletion(output.choices[0].text)
+			// await playthrough.addCompletion(output.choices[0].text)
 
-		// await playthrough.addPassageFromRef(outcome.ref.path)
+			// await playthrough.addPassageFromRef(outcome.ref.path)
 
-		return {
-			success: true
+			return {
+				success: true
+			}
+		} catch (e) {
+			return {
+				error: e
+			}
 		}
 	},
 

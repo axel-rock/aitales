@@ -37,6 +37,8 @@ header input {
 		width: 100vw;
 		top: 0;
 		left: 0;
+		z-index: 5;
+		isolation: isolate;
 		padding: calc(var(--space) * 1.5);
 		padding-top: 5rem;
 		display: flex;
@@ -44,7 +46,6 @@ header input {
 		transform: translateX(-120vh);
 		transition: transform 200ms ease;
 		background-color: Canvas;
-		z-index: 5;
 	}
 
 	header > input:checked ~ nav {

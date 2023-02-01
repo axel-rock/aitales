@@ -10,13 +10,14 @@ import type { Story } from './story'
 export class Playthrough {
 	id: string
 	story: Story
-	user: UserRecord
+	userId: string
 	passagesRef: [string?]
 
-	constructor(story: Story, user: UserRecord, id?: string, passagesRef?: [string?]) {
+	constructor(story: Story, userId: string, id?: string, passagesRef?: [string?]) {
 		this.id = id || firestore.collection(Playthrough.collection).doc().id
 		this.story = story
-		this.user = user
+		// To do: change all instances of user to userId. Then, remove
+		this.userId = userId
 		this.passagesRef = passagesRef || []
 		if (this.passagesRef.length === 0) this.addPassageId(this.story.startPassageId)
 	}
@@ -96,7 +97,7 @@ export class Playthrough {
 	save() {
 		return firestore.collection(Playthrough.collection).doc(this.id).set({
 			storyId: this.story.id,
-			userId: this.user.uid,
+			userId: this.userId,
 			passagesRef: this.passagesRef,
 			lastUpdated: FieldValue.serverTimestamp()
 		})
@@ -115,9 +116,9 @@ export class Playthrough {
 		return this.save()
 	}
 
-	static async fromStoryIdAndUser(
+	static async fromStoryIdAndUserId(
 		storyId: string,
-		user: UserRecord,
+		userId: string,
 		id?: string,
 		passagesRef?: [string?]
 	) {
@@ -125,7 +126,7 @@ export class Playthrough {
 		let story: any = await storyDoc.get()
 		story = story.data()
 		story = { id: storyDoc.id, ref: storyDoc.path, ...story } as Story
-		return new Playthrough(story, user, id, passagesRef)
+		return new Playthrough(story, userId, id, passagesRef)
 	}
 
 	static async getFromId(playthroughId: string) {
@@ -134,13 +135,10 @@ export class Playthrough {
 			.doc(playthroughId)
 			.get()
 		const playthroughData = playthroughDoc.data()
-		const user = (
-			await firestore.collection('users').doc(playthroughData?.userId).get()
-		).data() as UserRecord
 
-		return Playthrough.fromStoryIdAndUser(
+		return Playthrough.fromStoryIdAndUserId(
 			playthroughData?.storyId,
-			user,
+			playthroughData?.userId,
 			playthroughId,
 			playthroughData?.passagesRef
 		)

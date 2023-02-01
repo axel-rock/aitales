@@ -10,9 +10,9 @@ export const actions: Actions = {
 
 		const { storyId, nextPassageId } = Object.fromEntries(await request.formData())
 
-		const playthrough: Playthrough = await Playthrough.fromStoryIdAndUser(
+		const playthrough: Playthrough = await Playthrough.fromStoryIdAndUserId(
 			storyId as string,
-			user as UserRecord
+			(user as UserRecord).uid
 		)
 
 		await playthrough.addPassageId(nextPassageId as string)

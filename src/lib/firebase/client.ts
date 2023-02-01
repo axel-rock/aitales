@@ -15,11 +15,13 @@ import {
 	query,
 	collection,
 	QueryConstraint,
-	onSnapshot
+	onSnapshot,
+	setDoc
 } from 'firebase/firestore'
 import { initializeApp, getApp, getApps, type FirebaseApp } from 'firebase/app'
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut as _signOut } from 'firebase/auth'
 import { readable } from 'svelte/store'
+import { browser } from '$app/environment'
 
 export const firebaseConfig = {
 	apiKey: PUBLIC_APIKEY,
@@ -99,3 +101,13 @@ export const signOut = async () => {
 	})
 	document.location.reload()
 }
+
+// if (browser) {
+// 	auth.onAuthStateChanged((user) => {
+// 		if (user) {
+// 			const { displayName, photoURL, uid } = user
+// 			const userRef = _doc(db, 'users', uid)
+// 			setDoc(userRef, { displayName, photoURL, uid }, { merge: true })
+// 		}
+// 	})
+// }
