@@ -1,5 +1,5 @@
-header svg,
-header input {
+header > svg,
+header > input {
 	display: none;
 }
 

@@ -4,7 +4,7 @@
 	import Logo from '$lib/components/Logo.svelte'
 	import { afterNavigate } from '$app/navigation'
 
-	export let title = 'Ai Tales'
+	export let title = 'Ai Tools'
 	export let data: LayoutData
 	let { user, access } = data
 
