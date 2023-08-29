@@ -1,21 +1,13 @@
 // import firebase from 'svelte-adapter-firebase'
 import { vitePreprocess } from '@sveltejs/kit/vite'
-import firebase from 'svelte-adapter-firebase'
+import adapter from '@sveltejs/adapter-auto'
 
 const config = {
 	preprocess: [vitePreprocess()],
 
 	kit: {
 		// adapter: adapter()
-		adapter: firebase({
-			target: 'aitales'
-			// esbuildBuildOptions(defaultOptions) {
-			// 	return {
-			// 		...defaultOptions,
-			// 		target: 'esm'
-			// 	};
-			// }
-		})
+		adapter: adapter(),
 	}
 }
 

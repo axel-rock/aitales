@@ -4,7 +4,7 @@ import { getAuth, UserRecord } from 'firebase-admin/auth'
 import { getStorage } from 'firebase-admin/storage'
 import { PUBLIC_PROJECTID, PUBLIC_STORAGEBUCKET } from '$env/static/public'
 
-import { FIREBASE_ADMIN_PRIVATE_KEY, FIREBASE_ADMIN_CLIENT_EMAIL } from '$env/static/private'
+import { PRIVATE_FIREBASE_ADMIN_KEY, PRIVATE_FIREBASE_ADMIN_CLIENT_EMAIL } from '$env/static/private'
 
 function makeApp() {
 	const apps = getApps()
@@ -14,8 +14,8 @@ function makeApp() {
 
 	return initializeApp({
 		credential: cert({
-			privateKey: FIREBASE_ADMIN_PRIVATE_KEY,
-			clientEmail: FIREBASE_ADMIN_CLIENT_EMAIL,
+			privateKey: PRIVATE_FIREBASE_ADMIN_KEY,
+			clientEmail: PRIVATE_FIREBASE_ADMIN_CLIENT_EMAIL,
 			projectId: PUBLIC_PROJECTID
 		}),
 		databaseURL: `https://${PUBLIC_PROJECTID}.firebaseio.com`,

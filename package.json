@@ -34,6 +34,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@google-cloud/functions-framework": "^3.3.0",
 		"@rive-app/canvas": "^1.0.97",
 		"cookie": "^0.5.0",
 		"dropzone": "^6.0.0-beta.2",
